@@ -1,0 +1,13 @@
+{% extends 'core/base.html' %}
+
+{% load static %}
+
+{% block content %}
+  <div class="bg-sky-950 flex justify-center min-h-screen">
+    <div class="p-4 m-4 bg-white w-full max-w-lg rounded">
+      <div hx-get="{% url 'representative-create' %}" hx-trigger="load" id="id_representative_create"></div>
+      <div id="id_order"></div>
+    </div>
+  </div>
+  <div id="id_product_list" class="fixed top-0 left-0 right-0 bottom-0 bg-gray-800/40 p-2 flex items-center justify-center" style="display: none;" onclick="$('#id_product_list').hide()"></div>
+{% endblock %}

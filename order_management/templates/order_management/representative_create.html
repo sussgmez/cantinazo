@@ -1,0 +1,15 @@
+<form hx-post="{% url 'representative-create' %}" hx-target="#id_order">
+  {{ form.errors }}
+  {% csrf_token %}
+  <p class="font-bold mb-2">Datos del representante</p>
+  <div class="flex flex-col gap-0.5">
+    <input class="font-semibold p-2 text-sm rounded border border-gray-400" type="text" name="name" maxlength="100" id="id_name" placeholder="Nombre" />
+    <div class="flex gap-0.5">
+      <select class="font-semibold p-2 text-sm rounded border border-gray-400" name="phone_code" id="id_phone_code" required>
+        <option value="58">+58</option>
+      </select>
+      <input class="font-semibold p-2 text-sm rounded border border-gray-400 w-full" type="text" name="phone_number" maxlength="10" required id="id_phone_number" placeholder="Nro. de teléfono" />
+    </div>
+    <button class="text-sm p-2 bg-sky-100 font-bold rounded border border-sky-400 hover:bg-sky-200 cursor-pointer">Iniciar pedido</button>
+  </div>
+</form>

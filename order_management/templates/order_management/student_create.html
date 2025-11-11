@@ -1,0 +1,21 @@
+<form hx-post="{% url 'student-create' %}">
+  {% csrf_token %}
+  <p class="font-bold mb-2">Añadir estudiante</p>
+  <input type="hidden" name="representative" value="{{ representative }}" />
+  <div class="flex gap-0.5">
+    <input class="font-semibold p-2 text-sm rounded border border-gray-400 w-full" type="text" name="name" maxlength="100" required id="id_name" placeholder="Nombre" />
+    <select class="font-semibold p-2 text-sm rounded border border-gray-400" name="grade" required id="id_grade">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+    </select>
+    <select class="font-semibold p-2 text-sm rounded border border-gray-400" name="section" required id="id_section">
+      <option value="A">A</option>
+      <option value="B">B</option>
+    </select>
+    <button class="text-sm p-2 bg-sky-100 font-bold rounded border border-sky-400 hover:bg-sky-200 cursor-pointer">Añadir</button>
+  </div>
+</form>

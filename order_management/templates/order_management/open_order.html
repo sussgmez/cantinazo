@@ -1,0 +1,4 @@
+<div>
+  <div id="id_student_create" hx-get="{% url 'student-create' %}?representative={{ representative }}" hx-trigger="load"></div>
+  <div id="id_order_view" hx-get="{% url 'order' %}?representative={{ representative }}" hx-trigger="load, studentCreated from:body, orderCreated from:body, orderLineRemoved from:body"></div>
+</div>

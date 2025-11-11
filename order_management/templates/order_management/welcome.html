@@ -1,0 +1,37 @@
+{% extends 'core/base.html' %}
+
+{% load static %}
+
+{% block content %}
+  <div class="h-screen bg-sky-950 lg:flex">
+    <div class="px-4 py-8 gap-16 w-full h-screen grid justify-center grid-rows-3">
+      <div class="h-full flex justify-center">
+        <img class="h-full object-contain" src="{% static 'img/flex1.png' %}" alt="" />
+      </div>
+      <div class="h-full">
+        <a href="{% url 'home' %}" class="p-2 block bg-sky-900 text-white font-bold text-center text-3xl rounded">PEDIDO</a>
+      </div>
+      <div class="h-full flex justify-center">
+        <img class="h-full object-contain" src="{% static 'img/flex2.png' %}" alt="" />
+      </div>
+    </div>
+    <div class="flex w-fit aspect-square h-full">
+      <img src="{% static 'img/grid2.png' %}" alt="" />
+    </div>
+  </div>
+  {% comment %}
+
+  <div class="flex items-center justify-center min-h-screen min-w-screen p-4">
+    <div class="bg-white p-6 rounded-lg w-full max-w-lg shadow-2xl border border-gray-300">
+      <div class="mb-4">
+        <p class="text-lg font-bold mb-1">¡Gran cantinazo 2025!</p>
+        <p class="text-sm">Ingresa tu número de cédula y comienza a realizar tu pedido.</p>
+      </div>
+      <a href="{% url 'home' %}">Pedidos</a>
+    </div>
+  </div>
+  <div class="fixed top-0 left-0 right-0 bottom-0 -z-10">
+    <img class="object-cover h-full w-full" src="{% static 'img/login.jpg' %}" alt="" />
+  </div>
+  {% endcomment %}
+{% endblock %}

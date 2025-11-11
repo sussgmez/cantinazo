@@ -1,0 +1,37 @@
+{% load order_management_extra %}
+
+<div>
+  <p class="font-bold mb-2">Pedidos</p>
+  <div>
+    {% for student in students %}
+      <div class="p-2 bg-gray-100 rounded mb-2">
+        <div class="p-2">
+          <p class="font-semibold">Pedido de {{ student.name }}</p>
+        </div>
+        <div>
+          {% for orderline in order.orderlines.all %}
+            {% if student.pk == orderline.student.pk %}
+              <div class="flex justify-between">
+                <div>
+                  <p class="text-sm font-semibold">{{ orderline.product.name }}</p>
+                  <p class="text-sm text-gray-600">{{ orderline.product.price|multiply:exchange_rate.rate }}</p>
+                </div>
+                <div>
+                  <button class="bg-red-200 text-xs p-1 rounded" hx-get="{% url 'orderline-remove' orderline.pk %}">Eliminar</button>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+        <div>
+          <button class="bg-gray-200 p-2 rounded w-full text-sm font-semibold" hx-get="{% url 'product-list' %}?order={{ order.pk }}&student={{ student.pk }}" hx-target="#id_product_list" onclick="$('#id_product_list').show()">Añadir producto</button>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  <div>
+    <div>
+      <p>Monto total: {{ total|multiply:exchange_rate.rate }}</p>
+    </div>
+  </div>
+</div>
