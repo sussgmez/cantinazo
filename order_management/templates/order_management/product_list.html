@@ -4,7 +4,7 @@
   <p class="font-bold p-3 border-b border-b-gray-400">Productos disponibles</p>
   <div class="p-3 overflow-scroll max-h-96">
     {% for product in product_list %}
-      <div class="flex justify-between mb-2">
+      <div class="flex justify-between mb-2 items-center">
         <div>
           <p class="text-sm font-semibold">{{ product.name }}</p>
           <p class="text-sm text-gray-700">{{ product.price|multiply:exchange_rate.rate }} Bs.</p>
@@ -14,7 +14,11 @@
           <input type="hidden" name="product" value="{{ product.pk }}" />
           <input type="hidden" name="order" value="{{ order }}" />
           <input type="hidden" name="student" value="{{ student }}" />
-          <button class="text-xs font-semibold p-2 bg-gray-200 rounded cursor-pointer" onclick="$('#id_product_list').hide()">Añadir</button>
+          {% if product.stock > 0 %}
+            <button class="text-xs font-semibold p-2 bg-gray-200 rounded cursor-pointer" onclick="$('#id_product_list').hide()">Añadir</button>
+          {% else %}
+            <p class="text-xs text-red-500 font-semibold p-1.5 rounded">Agotado</p>
+          {% endif %}
         </form>
       </div>
     {% endfor %}
