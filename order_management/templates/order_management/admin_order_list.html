@@ -4,7 +4,7 @@
   {% for order in order_list %}
     <div class="flex justify-between items-center p-2 border rounded {% if order.checked %}border-emerald-600!{% endif %}{% if order.rejected %}border-red-700!{% endif %} border-gray-300">
       <div class="flex flex-col gap-0.5">
-        <p class="text-sm font-semibold">ORDER #{{ order.pk }}</p>
+        <p class="text-sm font-semibold">ORDEN #{{ order.pk }}: {{ order.representative.name }}</p>
         {% if order.payment_method == 0 %}
           {% if order.reference_number %}
             <p class="text-sm">Ref. {{ order.reference_number }}</p>
@@ -31,5 +31,7 @@
         {% endif %}
       </div>
     </div>
+  {% empty %}
+    <p class="bg-gray-200 p-2 text-sm rounded">Aún no se han realizado pedidos.</p>
   {% endfor %}
 </div>
