@@ -8,12 +8,18 @@ from django.utils.translation import gettext_lazy as _
 class ExchangeRate(models.Model):
     rate = models.DecimalField(_("Tasa de cambio"), max_digits=10, decimal_places=2)
 
+    def __str__(self):
+        return self.rate
+
 
 class Representative(models.Model):
     id = models.IntegerField(_("ID"), unique=True, primary_key=True)
     name = models.CharField(_("Nombre"), max_length=100, blank=True, null=True)
     phone_code = models.CharField(_("Código telefónico"), max_length=3)
     phone_number = models.CharField(_("Nro. de teléfono"), max_length=10)
+
+    def __str__(self):
+        return self.name
 
 
 class Student(models.Model):
@@ -47,11 +53,17 @@ class Student(models.Model):
         null=True,
     )
 
+    def __str__(self):
+        return self.name
+
 
 class Product(models.Model):
     name = models.CharField(_("Producto"), max_length=100)
     price = models.FloatField(_("Precio"))
     stock = models.IntegerField(_("Disponible"))
+
+    def __str__(self):
+        return self.name
 
 
 class Order(models.Model):

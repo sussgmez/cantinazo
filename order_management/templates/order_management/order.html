@@ -23,7 +23,7 @@
               <div class="flex justify-between items-center p-2">
                 <div>
                   <p class="text-sm font-semibold">{{ orderline.product.name }}</p>
-                  <p class="text-sm text-gray-600">{{ orderline.product.price|multiply:exchange_rate.rate }}</p>
+                  <p class="text-sm text-gray-600">{{ orderline.product.price|multiply:exchange_rate.rate|floatformat:2 }}Bs.</p>
                 </div>
                 <div>
                   <button class="bg-red-100 font-black text-xs p-1.5 text-red-700 rounded cursor-pointer" hx-get="{% url 'orderline-remove' orderline.pk %}">Quitar</button>

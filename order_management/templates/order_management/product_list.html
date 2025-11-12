@@ -7,7 +7,7 @@
       <div class="flex justify-between mb-2 items-center">
         <div>
           <p class="text-sm font-semibold">{{ product.name }}</p>
-          <p class="text-sm text-gray-700">{{ product.price|multiply:exchange_rate.rate }} Bs.</p>
+          <p class="text-sm text-gray-700">{{ product.price|multiply:exchange_rate.rate|floatformat:2 }} Bs.</p>
         </div>
         <form hx-post="{% url 'orderline-create' %}">
           {% csrf_token %}
