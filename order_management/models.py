@@ -8,9 +8,6 @@ from django.utils.translation import gettext_lazy as _
 class ExchangeRate(models.Model):
     rate = models.DecimalField(_("Tasa de cambio"), max_digits=10, decimal_places=2)
 
-    def __str__(self):
-        return self.rate
-
 
 class Representative(models.Model):
     id = models.IntegerField(_("ID"), unique=True, primary_key=True)
