@@ -11,8 +11,9 @@
         {% endfor %}
       </select>
       <select class="w-full font-semibold p-2 text-sm rounded bg-gray-200" name="section" required id="id_section">
-        <option value="A">A</option>
-        <option value="B">B</option>
+        {% for section in sections %}
+          <option value="{{ section.0 }}">{{ section.1 }}</option>
+        {% endfor %}
       </select>
       <button class="text-xs p-2 px-4 bg-sky-500 font-bold rounded border border-sky-500 text-white transition hover:border-sky-600 hover:bg-sky-600 cursor-pointer">Agregar</button>
     </div>

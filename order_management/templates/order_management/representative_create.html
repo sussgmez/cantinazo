@@ -2,7 +2,7 @@
   {% csrf_token %}
   <p class="font-bold mb-2 pb-1 border-b text-sm">Datos del representante</p>
   <div class="flex flex-col gap-1">
-    <input class="font-semibold p-2 text-sm rounded bg-gray-200" type="text" name="name" maxlength="100" id="id_name" placeholder="Nombre" />
+    <input class="font-semibold p-2 text-sm rounded bg-gray-200" type="text" name="name" maxlength="100" id="id_name" placeholder="Nombre" required />
     <div class="flex gap-1">
       <select class="font-semibold p-2 text-sm rounded bg-gray-200" name="phone_code" id="id_phone_code" required>
         <option value="58">+58</option>

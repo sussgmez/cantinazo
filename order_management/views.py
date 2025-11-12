@@ -65,6 +65,7 @@ class StudentCreateView(CreateView):
         context = super().get_context_data(**kwargs)
         context["representative"] = self.request.GET["representative"]
         context["grades"] = Student.GRADE_CHOICES
+        context["sections"] = Student.SECTION_CHOICES
         return context
 
     def form_valid(self, form):
@@ -198,13 +199,19 @@ def order_update_status(request, pk):
 
 def export_excel(request):
 
-    data = OrderLine.objects.filter(order__closed=True).values(
-        "order__pk",
-        "order__representative__name",
-        "order__payment_method",
-        "order__reference_number",
-        "student__name",
-        "product__name",
+    data = (
+        OrderLine.objects.filter(order__closed=True)
+        .values(
+            "order__pk",
+            "order__representative__name",
+            "order__payment_method",
+            "order__reference_number",
+            "student__name",
+            "student__grade",
+            "student__section",
+            "product__name",
+        )
+        .order_by("student__grade", "student__section")
     )
 
     df = pd.DataFrame(list(data))
@@ -219,5 +226,5 @@ def export_excel(request):
         excel_data,
         content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
-    response["Content-Disposition"] = 'attachment; filename="exported_data.xlsx"'
+    response["Content-Disposition"] = 'attachment; filename="cantinazo.xlsx"'
     return response
