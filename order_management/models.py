@@ -1,5 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db.models.signals import post_save, pre_delete
+from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
 
@@ -88,3 +90,16 @@ class OrderLine(models.Model):
     product = models.ForeignKey(
         Product, verbose_name=_("Producto"), on_delete=models.CASCADE
     )
+
+
+@receiver(post_save, sender=OrderLine)
+def orderline_post_save_receiver(sender, instance, created, **kwargs):
+    if created:
+        instance.product.stock -= 1
+        instance.product.save()
+
+
+@receiver(pre_delete, sender=OrderLine)
+def orderline_pre_delete_receiver(sender, instance, **kwargs):
+    instance.product.stock += 1
+    instance.product.save()
