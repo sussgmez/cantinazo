@@ -1,0 +1,20 @@
+{% extends 'core/base.html' %}
+
+{% load static %}
+
+{% block content %}
+  <div class="bg-sky-950 flex flex-col items-center min-h-screen py-2 px-2">
+    <div class="flex justify-center w-full max-w-lg items-center">
+      <img class="h-24" src="{% static 'img/flex1.png' %}" alt="" />
+    </div>
+    <div class="p-4 m-4 bg-white w-full max-w-lg rounded">
+      <form method="post" class="flex flex-col gap-1">
+        {% csrf_token %}
+        <p class="font-bold mb-2 pb-1 border-b text-sm">Iniciar sesión</p>
+        <input class="font-semibold p-2 text-sm rounded bg-gray-200" type="text" name="username" autofocus="" autocapitalize="none" autocomplete="username" maxlength="150" required="" id="id_username" placeholder="Nombre de usuario" />
+        <input class="font-semibold p-2 text-sm rounded bg-gray-200" type="password" name="password" autocomplete="current-password" required="" id="id_password" placeholder="Contraseña" />
+        <button class="bg-sky-600 text-sm text-white p-2 rounded">Iniciar sesión</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}

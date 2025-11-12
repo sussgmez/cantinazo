@@ -1,37 +1,101 @@
 {% load order_management_extra %}
 
 <div>
-  <p class="font-bold mb-2">Pedidos</p>
+  <p class="font-bold mb-2 pb-1 border-b text-sm">Pedidos</p>
   <div>
     {% for student in students %}
-      <div class="p-2 bg-gray-100 rounded mb-2">
-        <div class="p-2">
-          <p class="font-semibold">Pedido de {{ student.name }}</p>
+      <div class="p-1 border border-gray-400 rounded mb-2">
+        <div class="p-2 bg-gray-200 rounded mb-1 flex justify-between items-center">
+          <p class="font-semibold text-sm">Pedido de {{ student.name }}</p>
+          <button class="cursor-pointer" hx-get="{% url 'student-delete' student.pk %}" hx-target="#id_student_delete" onclick="$('#id_student_delete').show()">
+            <svg width="16" height="16" viewBox="0 0 24.00 24.00" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+              <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+              <g id="SVGRepo_iconCarrier">
+                <path d="M20.5001 6H3.5" stroke="#000000" stroke-width="1.9200000000000004" stroke-linecap="round"></path> <path d="M18.8332 8.5L18.3732 15.3991C18.1962 18.054 18.1077 19.3815 17.2427 20.1907C16.3777 21 15.0473 21 12.3865 21H11.6132C8.95235 21 7.62195 21 6.75694 20.1907C5.89194 19.3815 5.80344 18.054 5.62644 15.3991L5.1665 8.5" stroke="#000000" stroke-width="1.9200000000000004" stroke-linecap="round"></path> <path d="M9.1709 4C9.58273 2.83481 10.694 2 12.0002 2C13.3064 2 14.4177 2.83481 14.8295 4" stroke="#000000" stroke-width="1.9200000000000004" stroke-linecap="round"></path>
+              </g>
+            </svg>
+          </button>
         </div>
         <div>
           {% for orderline in order.orderlines.all %}
             {% if student.pk == orderline.student.pk %}
-              <div class="flex justify-between">
+              <div class="flex justify-between items-center p-2">
                 <div>
                   <p class="text-sm font-semibold">{{ orderline.product.name }}</p>
                   <p class="text-sm text-gray-600">{{ orderline.product.price|multiply:exchange_rate.rate }}</p>
                 </div>
                 <div>
-                  <button class="bg-red-200 text-xs p-1 rounded" hx-get="{% url 'orderline-remove' orderline.pk %}">Eliminar</button>
+                  <button class="bg-red-100 font-black text-xs p-1.5 text-red-700 rounded cursor-pointer" hx-get="{% url 'orderline-remove' orderline.pk %}">Quitar</button>
                 </div>
               </div>
             {% endif %}
           {% endfor %}
         </div>
         <div>
-          <button class="bg-gray-200 p-2 rounded w-full text-sm font-semibold" hx-get="{% url 'product-list' %}?order={{ order.pk }}&student={{ student.pk }}" hx-target="#id_product_list" onclick="$('#id_product_list').show()">Añadir producto</button>
+          <button class="text-xs p-2 bg-sky-500 font-bold rounded border border-sky-500 text-white transition hover:border-sky-600 hover:bg-sky-600 cursor-pointer w-full" hx-get="{% url 'product-list' %}?order={{ order.pk }}&student={{ student.pk }}" hx-target="#id_product_list" onclick="$('#id_product_list').show()">Añadir producto</button>
         </div>
       </div>
     {% endfor %}
   </div>
   <div>
+    <div class="bg-gray-200 p-2 rounded mb-2">
+      <form hx-post="{% url 'order-update' order.pk %}" class="flex flex-col gap-4" onsubmit="{% if total <= 0 %}event.preventDefault(){% endif %}">
+        {% csrf_token %}
+        <div>
+          <p class="font-bold mb-2 pb-1 border-b text-sm">Método de pago</p>
+          <div class="flex gap-1">
+            <select class="bg-gray-300 rounded text-sm p-2 font-semibold w-full h-9" name="payment_method" id="id_payment_method" onchange="handleInputPaymentMethod(this)">
+              <option value="0">Pago móvil</option>
+              <option value="1">Efectivo</option>
+            </select>
+            <input class="bg-gray-300 rounded text-sm p-2 font-semibold w-full" name="reference_number" id="id_reference_number" type="text" pattern="[0-9]+" placeholder="Nro. de referencia" required />
+          </div>
+        </div>
+        <p class="text-right text-sm font-bold">Monto total: {{ total|multiply:exchange_rate.rate|floatformat:2 }}Bs.</p>
+        {% if total > 0 %}
+          <button class="w-full p-2 text-xs bg-emerald-600 text-white rounded hover:bg-emerald-700 cursor-pointer font-bold">Realizar pedido</button>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+  <div>
+    <p class="font-bold mb-2 pb-1 border-b text-sm">Pedidos realizados</p>
     <div>
-      <p>Monto total: {{ total|multiply:exchange_rate.rate }}</p>
+      {% for closed_order in closed_orders %}
+        <div class="p-2 bg-gray-200 rounded mb-1">
+          <div class="flex justify-between p-2">
+            <div class="flex flex-col">
+              <p class="text-sm font-semibold">Orden #{{ closed_order.pk }}</p>
+              {% if closed_order.reference_number %}
+                <p class="text-sm">Nro. de referencia: {{ closed_order.reference_number }}</p>
+              {% endif %}
+            </div>
+            {% if closed_order.total %}
+              <p class="text-sm">{{ closed_order.total|multiply:exchange_rate.rate|floatformat:2 }}Bs.</p>
+            {% else %}
+              <p class="text-sm">0,00Bs.</p>
+            {% endif %}
+          </div>
+          {% if closed_order.rejected %}
+            <form hx-post="{% url 'order-update' closed_order.pk %}" class="flex gap-1">
+              {% csrf_token %}
+              <div class="flex w-full gap-1">
+                <select class="bg-gray-300 rounded text-sm p-2 font-semibold w-full h-9" name="payment_method" id="id_update_payment_method" onchange="handleInputUpdatePaymentMethod(this)">
+                  <option value="0">Pago móvil</option>
+                  <option value="1">Efectivo</option>
+                </select>
+                <input class="bg-gray-300 rounded text-sm p-2 font-semibold w-full" name="reference_number" id="id_update_reference_number" type="text" pattern="[0-9]+" placeholder="Nro. de referencia" required />
+              </div>
+              <button class="w-1/4 p-2 text-xs bg-emerald-600 text-white rounded hover:bg-emerald-700 cursor-pointer font-bold">Modificar</button>
+            </form>
+          {% endif %}
+        </div>
+      {% empty %}
+        <div class="bg-gray-200 p-3 rounded">
+          <p class="font-semibold text-sm text-gray-600">Aún no tienes pedidos realizados.</p>
+        </div>
+      {% endfor %}
     </div>
   </div>
 </div>

@@ -3,11 +3,15 @@
 {% load static %}
 
 {% block content %}
-  <div class="bg-sky-950 flex justify-center min-h-screen">
+  <div class="bg-sky-950 flex flex-col items-center min-h-screen py-2 px-2">
+    <div class="flex justify-center w-full max-w-lg items-center">
+      <img class="h-24" src="{% static 'img/flex1.png' %}" alt="" />
+    </div>
     <div class="p-4 m-4 bg-white w-full max-w-lg rounded">
-      <div hx-get="{% url 'representative-create' %}" hx-trigger="load" id="id_representative_create"></div>
+      <div class="mb-4" hx-get="{% url 'representative-create' %}" hx-trigger="load" id="id_representative_create"></div>
       <div id="id_order"></div>
     </div>
   </div>
-  <div id="id_product_list" class="fixed top-0 left-0 right-0 bottom-0 bg-gray-800/40 p-2 flex items-center justify-center" style="display: none;" onclick="$('#id_product_list').hide()"></div>
+  <div id="id_product_list" class="fixed top-0 left-0 right-0 bottom-0 bg-gray-800/40 p-2 flex items-center justify-center backdrop-blur-sm" style="display: none;" onclick="$('#id_product_list').hide()"></div>
+  <div id="id_student_delete" class="fixed top-0 left-0 right-0 bottom-0 bg-gray-800/40 p-2 flex items-center justify-center backdrop-blur-sm" style="display: none;" onclick="$('#id_student_delete').hide()"></div>
 {% endblock %}

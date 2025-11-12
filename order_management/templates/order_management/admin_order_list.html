@@ -1,0 +1,35 @@
+{% load order_management_extra %}
+
+<div class="h-96 overflow-y-scroll flex flex-col gap-1">
+  {% for order in order_list %}
+    <div class="flex justify-between items-center p-2 border rounded {% if order.checked %}border-emerald-600!{% endif %}{% if order.rejected %}border-red-700!{% endif %} border-gray-300">
+      <div class="flex flex-col gap-0.5">
+        <p class="text-sm font-semibold">ORDER #{{ order.pk }}</p>
+        {% if order.payment_method == 0 %}
+          {% if order.reference_number %}
+            <p class="text-sm">Ref. {{ order.reference_number }}</p>
+          {% else %}
+            <p class="text-sm">-</p>
+          {% endif %}
+        {% else %}
+          <p class="text-sm italic text-gray-700">Pago en fectivo</p>
+        {% endif %}
+        <p class="text-sm">{{ order.total|multiply:exchange_rate.rate }}Bs. - {{ order.total }}$</p>
+      </div>
+      <div class="flex gap-1">
+        {% if order.payment_method == 0 %}
+          {% if order.checked or order.rejected %}
+            <button hx-get="{% url 'order-update-status' order.pk %}?status=2" class="bg-gray-700 text-white text-xs font-semibold p-1.5 rounded h-fit cursor-pointer">Cancelar</button>
+          {% else %}
+            {% if not order.checked %}
+              <button hx-get="{% url 'order-update-status' order.pk %}?status=0" class="bg-emerald-700 text-white text-xs font-semibold p-1.5 rounded h-fit cursor-pointer">Confirmar</button>
+            {% endif %}
+            {% if not order.rejected %}
+              <button hx-get="{% url 'order-update-status' order.pk %}?status=1" class="bg-red-700 text-white text-xs font-semibold p-1.5 rounded h-fit cursor-pointer">Rechazar</button>
+            {% endif %}
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+</div>

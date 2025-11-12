@@ -16,14 +16,20 @@ class Representative(models.Model):
 
 class Student(models.Model):
     GRADE_CHOICES = [
-        ("1", "1"),
-        ("2", "2"),
-        ("3", "3"),
-        ("4", "4"),
-        ("5", "5"),
-        ("6", "6"),
+        ("1", "1er. grado"),
+        ("2", "2do. grado"),
+        ("3", "3er. grado"),
+        ("4", "4to. grado"),
+        ("5", "5to. grado"),
+        ("6", "6to. grado"),
+        ("7", "1er. año"),
+        ("8", "2do. año"),
+        ("9", "3er. año"),
+        ("10", "4to. año"),
+        ("11", "5to. año"),
     ]
     SECTION_CHOICES = [
+        ("U", "U"),
         ("A", "A"),
         ("B", "B"),
     ]
@@ -35,6 +41,8 @@ class Student(models.Model):
         verbose_name=_("Representante"),
         related_name="students",
         on_delete=models.CASCADE,
+        blank=True,
+        null=True,
     )
 
 
@@ -45,6 +53,11 @@ class Product(models.Model):
 
 
 class Order(models.Model):
+    PAYMENT_METHOD_CHOICES = [
+        (0, "Pago móvil"),
+        (1, "Efectivo"),
+    ]
+    payment_method = models.SmallIntegerField(_("Método de pago"), default=0)
     representative = models.ForeignKey(
         Representative,
         verbose_name=_("Representante"),
@@ -54,6 +67,7 @@ class Order(models.Model):
     reference_number = models.IntegerField(
         _("Nro. de referencia"), blank=True, null=True
     )
+    rejected = models.BooleanField(_("Orden rechazada"), default=False)
     closed = models.BooleanField(_("Orden cerrada"), default=False)
     checked = models.BooleanField(_("Orden confirmada"), default=False)
 
@@ -66,7 +80,10 @@ class OrderLine(models.Model):
         related_name="orderlines",
     )
     student = models.ForeignKey(
-        Student, verbose_name=_("Estudiante"), on_delete=models.CASCADE
+        Student,
+        verbose_name=_("Estudiante"),
+        on_delete=models.CASCADE,
+        related_name="orderlines",
     )
     product = models.ForeignKey(
         Product, verbose_name=_("Producto"), on_delete=models.CASCADE

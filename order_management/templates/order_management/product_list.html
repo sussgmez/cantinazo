@@ -1,6 +1,6 @@
 {% load order_management_extra %}
 
-<div class="bg-white rounded w-full" onclick="event.stopPropagation()">
+<div class="bg-white rounded w-full max-w-md" onclick="event.stopPropagation()">
   <p class="font-bold p-3 border-b border-b-gray-400">Productos disponibles</p>
   <div class="p-3 overflow-scroll max-h-96">
     {% for product in product_list %}
