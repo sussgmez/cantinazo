@@ -14,7 +14,7 @@
         {% else %}
           <p class="text-sm italic text-gray-700">Pago en fectivo</p>
         {% endif %}
-        <p class="text-sm">{{ order.total|multiply:exchange_rate.rate }}Bs. - {{ order.total }}$</p>
+        <p class="text-sm">{{ order.total|multiply:exchange_rate.rate|floatformat:2 }}Bs. - {{ order.total|floatformat:2 }}$</p>
       </div>
       <div class="flex gap-1">
         {% if order.payment_method == 0 %}

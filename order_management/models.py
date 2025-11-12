@@ -82,6 +82,9 @@ class Order(models.Model):
     closed = models.BooleanField(_("Orden cerrada"), default=False)
     checked = models.BooleanField(_("Orden confirmada"), default=False)
 
+    def __str__(self):
+        return f'ORDEN #{self.pk} - {self.representative.name} - {"Cerrada" if self.closed else "Abierta"}'
+
 
 class OrderLine(models.Model):
     order = models.ForeignKey(
