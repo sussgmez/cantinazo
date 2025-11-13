@@ -1,4 +1,4 @@
-<div>
+<div class="flex flex-col gap-6">
   <div class="mb-4" id="id_student_create" hx-get="{% url 'student-create' %}?representative={{ representative }}" hx-trigger="load, studentCreated from:body, studentDeleted from:body"></div>
   <div id="id_order_view" hx-get="{% url 'order' %}?representative={{ representative }}" hx-trigger="load, studentCreated from:body, studentDeleted from:body, orderCreated from:body, orderClosed from:body, orderLineRemoved from:body"></div>
 </div>

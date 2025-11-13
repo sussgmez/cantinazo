@@ -184,8 +184,8 @@ def order_update_status(request, pk):
                 order.rejected = False
                 order.checked = True
             elif status == "1":
-                order.checked = False
                 order.rejected = True
+                order.checked = False
             elif status == "2":
                 order.checked = False
                 order.rejected = False
@@ -201,6 +201,7 @@ def export_excel(request):
 
     data = (
         OrderLine.objects.filter(order__closed=True)
+        .exclude(order__rejected=True)
         .values(
             "order__pk",
             "order__representative__name",
