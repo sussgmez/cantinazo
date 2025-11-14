@@ -1,11 +1,12 @@
 import pandas as pd
 import io
-from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.shortcuts import render
 from django.http import HttpResponse
-from django.views.generic import TemplateView, ListView, CreateView, DeleteView
-from django.db.models import Sum
+from django.views.generic import TemplateView, ListView, CreateView
+from django.db.models import Sum, Case, When, Value, CharField
+from django.core.exceptions import MultipleObjectsReturned
 from .models import Student, Representative, Product, Order, OrderLine, ExchangeRate
+from .utils import send_whatsapp_message
 
 
 class WelcomeView(TemplateView):
@@ -85,9 +86,19 @@ class OrderView(TemplateView):
             id=self.request.GET["representative"]
         )
         context["students"] = representative.students.all()
-        order = Order.objects.get_or_create(
-            representative=representative, closed=False
-        )[0]
+
+        try:
+            order, created = Order.objects.get_or_create(
+                representative=representative, closed=False
+            )
+        except MultipleObjectsReturned:
+            open_orders = Order.objects.filter(
+                representative=representative, closed=False
+            )
+            for order in open_orders[1:]:
+                order.delete()
+            order = open_orders.first()
+
         context["order"] = order
         context["total"] = (
             order.orderlines.all().aggregate(total=Sum("product__price"))["total"]
@@ -169,6 +180,10 @@ def order_update(request, pk):
         order.rejected = False
         order.save()
 
+        # user_number = "+584123517748"
+        # message = "Prueba"
+        # send_whatsapp_message(user_number, message)
+
         response = HttpResponse(status=204)
         response["HX-Trigger"] = "orderClosed"
         return response
@@ -199,23 +214,60 @@ def order_update_status(request, pk):
 
 def export_excel(request):
 
+    grade_choices = Student.GRADE_CHOICES
+
+    payment_method_choices = Order.PAYMENT_METHOD_CHOICES
+
+    student_grade_display_case = Case(
+        *[
+            When(student__grade=valor_db, then=Value(label))
+            for valor_db, label in grade_choices
+        ],
+        default=Value("Desconocido"),
+        output_field=CharField(),
+    )
+
+    order_payment_method_display_case = Case(
+        *[
+            When(order__payment_method=valor_db, then=Value(label))
+            for valor_db, label in payment_method_choices
+        ],
+        default=Value("Desconocido"),
+        output_field=CharField(),
+    )
+
     data = (
         OrderLine.objects.filter(order__closed=True)
         .exclude(order__rejected=True)
+        .annotate(total=Sum("order__orderlines__product__price"))
+        .annotate(student__grade_display=student_grade_display_case)
+        .annotate(order__payment_method_display=order_payment_method_display_case)
         .values(
             "order__pk",
             "order__representative__name",
-            "order__payment_method",
+            "order__payment_method_display",
             "order__reference_number",
+            "total",
             "student__name",
-            "student__grade",
+            "student__grade_display",
             "student__section",
             "product__name",
         )
-        .order_by("student__grade", "student__section")
     )
 
     df = pd.DataFrame(list(data))
+
+    df.columns = [
+        "ID",
+        "Nombre del representante",
+        "Método de pago",
+        "# de referencia",
+        "Total del pago",
+        "Nombre del estudiante",
+        "Grado",
+        "Sección",
+        "Producto",
+    ]
 
     output = io.BytesIO()
 

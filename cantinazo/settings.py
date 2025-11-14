@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,6 +25,9 @@ SECRET_KEY = "django-insecure-v=6mrp(tc$*mrl34=36oyw2)0o0ot!(=$iuu9zii%$$s2mtda9
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
+
+env = environ.Env(DEBUG=(bool, False))
+environ.Env.read_env(BASE_DIR / ".env")
 
 ALLOWED_HOSTS = ["*"]
 
@@ -132,3 +136,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 TAILWIND_APP_NAME = "theme"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+
+TWILIO_ACCOUNT_SID = env("TWILIO_ACCOUNT_SID")
+TWILIO_AUTH_TOKEN = env("TWILIO_AUTH_TOKEN")
+TWILIO_WHATSAPP_NUMBER = env("TWILIO_WHATSAPP_NUMBER")
