@@ -9,10 +9,38 @@
     </div>
     <div class="p-4 bg-white w-full max-w-lg rounded">
       {% if user.is_staff %}
-        <a class="block p-2 w-full bg-emerald-800 text-white rounded text-xs text-center font-semibold mb-4" href="{% url 'export-excel' %}">Exportar datos</a>
+        <form action="{% url 'export-excel' %}" method="get" class="flex mb-4 gap-1">
+          <select name="grade" class="text-sm bg-gray-300 p-2 rounded font-semibold w-full">
+            <option value="">Todos los alumnos</option>
+            {% for grade in grades %}
+              <option value="{{ grade.0 }}">{{ grade.1 }}</option>
+            {% endfor %}
+          </select>
+          <button class="block p-2 bg-emerald-800 text-white rounded text-xs text-center font-semibold text-nowrap">Exportar datos</button>
+        </form>
         <hr class="mb-4" />
       {% endif %}
       <div hx-get="{% url 'admin-order-list' %}" hx-trigger="load, orderUpdated from:body"></div>
+    </div>
+
+    <div class="p-4 bg-white w-full max-w-lg rounded">
+      <p class="font-semibold mb-2">Productos</p>
+      <div class="w-full border rounded overflow-x-scroll">
+        <table class="w-full">
+          <tr class="bg-gray-300">
+            <th class="text-left text-sm p-2">Producto</th>
+            <th class="text-left text-sm p-2">Disponibles</th>
+            <th class="text-left text-sm p-2">Vendidos</th>
+          </tr>
+          {% for product in products %}
+            <tr class="odd:bg-gray-200">
+              <td class="text-sm p-2">{{ product.name }}</td>
+              <td class="text-sm p-2">{{ product.stock }}</td>
+              <td class="text-sm p-2">{{ product.sold }}</td>
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
     </div>
   </div>
 {% endblock %}

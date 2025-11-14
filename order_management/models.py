@@ -82,6 +82,8 @@ class Order(models.Model):
     closed = models.BooleanField(_("Orden cerrada"), default=False)
     checked = models.BooleanField(_("Orden confirmada"), default=False)
 
+    created_at = models.DateTimeField(_("Fecha de creación"), auto_now_add=True)
+
     def __str__(self):
         return f'ORDEN #{self.pk} - {self.representative.name} - {"Cerrada" if self.closed else "Abierta"}'
 
@@ -100,7 +102,10 @@ class OrderLine(models.Model):
         related_name="orderlines",
     )
     product = models.ForeignKey(
-        Product, verbose_name=_("Producto"), on_delete=models.CASCADE
+        Product,
+        verbose_name=_("Producto"),
+        on_delete=models.CASCADE,
+        related_name="orderlines",
     )
 
 

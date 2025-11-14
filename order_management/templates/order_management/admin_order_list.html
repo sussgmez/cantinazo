@@ -1,6 +1,6 @@
 {% load order_management_extra %}
 
-<div class="h-96 overflow-y-scroll flex flex-col gap-1">
+<div class="h-screen overflow-y-scroll flex flex-col gap-1">
   {% for order in order_list %}
     <div class="flex justify-between items-center p-2 border rounded {% if order.checked %}border-emerald-600!{% endif %}{% if order.rejected %}border-red-700!{% endif %} border-gray-300">
       <div class="flex flex-col gap-0.5">

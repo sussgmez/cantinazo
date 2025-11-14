@@ -3,7 +3,7 @@ import io
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.generic import TemplateView, ListView, CreateView
-from django.db.models import Sum, Case, When, Value, CharField
+from django.db.models import Sum, Case, When, Value, CharField, Count
 from django.core.exceptions import MultipleObjectsReturned
 from .models import Student, Representative, Product, Order, OrderLine, ExchangeRate
 from .utils import send_whatsapp_message
@@ -20,6 +20,12 @@ class HomeView(TemplateView):
 class AdminView(TemplateView):
     template_name = "order_management/admin_cantinazo.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["grades"] = Student.GRADE_CHOICES
+        context["products"] = Product.objects.all().annotate(sold=Count("orderlines"))
+        return context
+
 
 class AdminOrderListView(ListView):
     model = Order
@@ -29,7 +35,7 @@ class AdminOrderListView(ListView):
         orders = (
             Order.objects.filter(closed=True)
             .annotate(total=Sum("orderlines__product__price"))
-            .order_by("payment_method", "checked")
+            .order_by("-created_at", "payment_method", "checked")
         )
         return orders
 
@@ -180,9 +186,13 @@ def order_update(request, pk):
         order.rejected = False
         order.save()
 
-        # user_number = "+584123517748"
-        # message = "Prueba"
-        # send_whatsapp_message(user_number, message)
+        user_number = "+584123517748"
+
+        if order.payment_method == "0":
+            message = f"+{order.representative.phone_code} {order.representative.phone_number}: {order.representative.name} ha realizado una nueva orden, nro. de referencia #{order.reference_number}. Por favor confirmar pago."
+        else:
+            message = f"+{order.representative.phone_code} {order.representative.phone_number}: {order.representative.name} ha realizado una nueva orden."
+        send_whatsapp_message(user_number, message)
 
         response = HttpResponse(status=204)
         response["HX-Trigger"] = "orderClosed"
@@ -236,9 +246,15 @@ def export_excel(request):
         output_field=CharField(),
     )
 
+    grade = request.GET["grade"]
+
+    if grade == "":
+        orderlines = OrderLine.objects.filter(order__closed=True)
+    else:
+        orderlines = OrderLine.objects.filter(order__closed=True, student__grade=grade)
+
     data = (
-        OrderLine.objects.filter(order__closed=True)
-        .exclude(order__rejected=True)
+        orderlines.exclude(order__rejected=True)
         .annotate(total=Sum("order__orderlines__product__price"))
         .annotate(student__grade_display=student_grade_display_case)
         .annotate(order__payment_method_display=order_payment_method_display_case)
@@ -257,17 +273,19 @@ def export_excel(request):
 
     df = pd.DataFrame(list(data))
 
-    df.columns = [
-        "ID",
-        "Nombre del representante",
-        "Método de pago",
-        "# de referencia",
-        "Total del pago",
-        "Nombre del estudiante",
-        "Grado",
-        "Sección",
-        "Producto",
-    ]
+    print(df.empty)
+    if not df.empty:
+        df.columns = [
+            "ID",
+            "Nombre del representante",
+            "Método de pago",
+            "# de referencia",
+            "Total del pago",
+            "Nombre del estudiante",
+            "Grado",
+            "Sección",
+            "Producto",
+        ]
 
     output = io.BytesIO()
 
