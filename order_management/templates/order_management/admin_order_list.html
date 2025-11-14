@@ -2,7 +2,7 @@
 
 <div class="h-screen overflow-y-scroll flex flex-col gap-1">
   {% for order in order_list %}
-    <div class="flex justify-between items-center p-2 border rounded {% if order.checked %}border-emerald-600!{% endif %}{% if order.rejected %}border-red-700!{% endif %} border-gray-300">
+    <div class="flex justify-between  p-2 border rounded {% if order.checked %}border-emerald-600!{% endif %}{% if order.rejected %}border-red-700!{% endif %} border-gray-600">
       <div class="flex flex-col gap-0.5">
         <p class="text-sm font-semibold">ORDEN #{{ order.pk }}: {{ order.representative.name }}</p>
         <p class="text-sm">+{{ order.representative.phone_code }}{{ order.representative.phone_number }}</p>
@@ -20,17 +20,65 @@
       <div class="flex gap-1">
         {% if order.payment_method == 0 %}
           {% if order.checked or order.rejected %}
-            <button hx-get="{% url 'order-update-status' order.pk %}?status=2" class="bg-gray-700 text-white text-xs font-semibold p-1.5 rounded h-fit cursor-pointer">Cancelar</button>
+            <button hx-get="{% url 'order-update-status' order.pk %}?status=2" class="bg-gray-700 text-white text-xs font-semibold p-1.5 rounded h-fit cursor-pointer">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" stroke-width="0.8160000000000001">
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                <g id="SVGRepo_iconCarrier">
+                  <path d="M4 10L3.29289 10.7071L2.58579 10L3.29289 9.29289L4 10ZM21 18C21 18.5523 20.5523 19 20 19C19.4477 19 19 18.5523 19 18L21 18ZM8.29289 15.7071L3.29289 10.7071L4.70711 9.29289L9.70711 14.2929L8.29289 15.7071ZM3.29289 9.29289L8.29289 4.29289L9.70711 5.70711L4.70711 10.7071L3.29289 9.29289ZM4 9L14 9L14 11L4 11L4 9ZM21 16L21 18L19 18L19 16L21 16ZM14 9C17.866 9 21 12.134 21 16L19 16C19 13.2386 16.7614 11 14 11L14 9Z" fill="#ffffff"></path>
+                </g>
+              </svg>
+            </button>
           {% else %}
             {% if not order.checked %}
-              <button hx-get="{% url 'order-update-status' order.pk %}?status=0" class="bg-emerald-700 text-white text-xs font-semibold p-1.5 rounded h-fit cursor-pointer">Confirmar</button>
+              <button hx-get="{% url 'order-update-status' order.pk %}?status=0" class="bg-emerald-700 text-white text-xs font-semibold p-1.5 rounded h-fit cursor-pointer">
+                <svg fill="#ffffff" width="12" height="12" viewBox="-4 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff">
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <title>check</title> <path d="M19.375 5.063l-9.5 13.625-6.563-4.875-3.313 4.594 11.188 8.531 12.813-18.375z"></path>
+                  </g>
+                </svg>
+              </button>
             {% endif %}
             {% if not order.rejected %}
-              <button hx-get="{% url 'order-update-status' order.pk %}?status=1" class="bg-red-700 text-white text-xs font-semibold p-1.5 rounded h-fit cursor-pointer">Rechazar</button>
+              <button hx-get="{% url 'order-update-status' order.pk %}?status=1" class="bg-red-700 text-white text-xs font-semibold p-1.5 rounded h-fit cursor-pointer">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" stroke-width="2.4">
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M19.207 6.207a1 1 0 0 0-1.414-1.414L12 10.586 6.207 4.793a1 1 0 0 0-1.414 1.414L10.586 12l-5.793 5.793a1 1 0 1 0 1.414 1.414L12 13.414l5.793 5.793a1 1 0 0 0 1.414-1.414L13.414 12l5.793-5.793z" fill="#ffffff"></path>
+                  </g>
+                </svg>
+              </button>
             {% endif %}
           {% endif %}
         {% endif %}
+        <button class="bg-black text-white text-xs font-semibold p-1.5 rounded h-fit cursor-pointer" onclick="$('#order-detail-{{ order.pk }}').toggle()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M6.30147 15.5771C4.77832 14.2684 3.6904 12.7726 3.18002 12C3.6904 11.2274 4.77832 9.73158 6.30147 8.42294C7.87402 7.07185 9.81574 6 12 6C14.1843 6 16.1261 7.07185 17.6986 8.42294C19.2218 9.73158 20.3097 11.2274 20.8201 12C20.3097 12.7726 19.2218 14.2684 17.6986 15.5771C16.1261 16.9282 14.1843 18 12 18C9.81574 18 7.87402 16.9282 6.30147 15.5771ZM12 4C9.14754 4 6.75717 5.39462 4.99812 6.90595C3.23268 8.42276 2.00757 10.1376 1.46387 10.9698C1.05306 11.5985 1.05306 12.4015 1.46387 13.0302C2.00757 13.8624 3.23268 15.5772 4.99812 17.0941C6.75717 18.6054 9.14754 20 12 20C14.8525 20 17.2429 18.6054 19.002 17.0941C20.7674 15.5772 21.9925 13.8624 22.5362 13.0302C22.947 12.4015 22.947 11.5985 22.5362 10.9698C21.9925 10.1376 20.7674 8.42276 19.002 6.90595C17.2429 5.39462 14.8525 4 12 4ZM10 12C10 10.8954 10.8955 10 12 10C13.1046 10 14 10.8954 14 12C14 13.1046 13.1046 14 12 14C10.8955 14 10 13.1046 10 12ZM12 8C9.7909 8 8.00004 9.79086 8.00004 12C8.00004 14.2091 9.7909 16 12 16C14.2092 16 16 14.2091 16 12C16 9.79086 14.2092 8 12 8Z" fill="#ffffff"></path>
+            </g>
+          </svg>
+        </button>
       </div>
+    </div>
+
+    {% regroup order.orderlines.all by student as order_grouped %}
+
+    <div id="order-detail-{{ order.pk }}" class="rounded border border-gray-400 mb-4" style="display: none;">
+      {% for orderlines in order_grouped %}
+        <div>
+          <p class="text-sm font-semibold p-1.5 bg-gray-400">{{ orderlines.grouper }}</p>
+          {% for orderline in orderlines.list %}
+            <div>
+              <p class="text-sm p-1.5">{{ orderline.product.name }}</p>
+            </div>
+          {% endfor %}
+        </div>
+      {% endfor %}
     </div>
   {% empty %}
     <p class="bg-gray-200 p-2 text-sm rounded">Aún no se han realizado pedidos.</p>
