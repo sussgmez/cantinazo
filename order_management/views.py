@@ -141,11 +141,11 @@ def student_delete(request, pk):
 
     elif request.method == "POST":
 
+        student.representative = None
         for orderline in student.orderlines.all():
-            student.representative = None
             if orderline.order.closed == False:
                 orderline.order.delete()
-            student.save()
+        student.save()
 
         response = HttpResponse(status=204)
         response["HX-Trigger"] = "studentDeleted"
@@ -186,13 +186,14 @@ def order_update(request, pk):
         order.rejected = False
         order.save()
 
-        user_number = "+584123517748"
-
         if order.payment_method == "0":
             message = f"+{order.representative.phone_code} {order.representative.phone_number}: {order.representative.name} ha realizado una nueva orden, nro. de referencia #{order.reference_number}. Por favor confirmar pago."
         else:
             message = f"+{order.representative.phone_code} {order.representative.phone_number}: {order.representative.name} ha realizado una nueva orden."
-        send_whatsapp_message(user_number, message)
+
+        send_whatsapp_message("+584248377782", message)
+        send_whatsapp_message("+584143939270", message)
+        send_whatsapp_message("+584123517748", message)
 
         response = HttpResponse(status=204)
         response["HX-Trigger"] = "orderClosed"
