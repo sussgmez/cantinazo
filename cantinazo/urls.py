@@ -14,8 +14,8 @@ urlpatterns = [
         login_required(views.AdminView.as_view()),
         name="admin-cantinazo",
     ),
-    path("welcome/", views.WelcomeView.as_view(), name="welcome"),
-    path("", views.HomeView.as_view(), name="home"),
+    path("", views.WelcomeView.as_view(), name="welcome"),
+    path("pedido/", views.HomeView.as_view(), name="home"),
     # Representative
     path(
         "representative/create/",

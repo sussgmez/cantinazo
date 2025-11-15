@@ -144,7 +144,7 @@ def student_delete(request, pk):
         student.representative = None
         for orderline in student.orderlines.all():
             if orderline.order.closed == False:
-                orderline.order.delete()
+                orderline.delete()
         student.save()
 
         response = HttpResponse(status=204)
