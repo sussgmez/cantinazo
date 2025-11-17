@@ -24,7 +24,11 @@
     </div>
 
     <div class="p-4 bg-white w-full max-w-lg rounded">
-      <p class="font-semibold mb-2">Productos</p>
+      <div class="flex justify-between mb-2 items-center">
+        <p class="font-semibold">Productos</p>
+        <a class="block p-2 bg-emerald-800 text-white rounded text-xs text-center font-semibold text-nowrap" href="{% url 'export-product-excel' %}">Exportar productos</a>
+      </div>
+
       <div class="w-full border rounded overflow-x-scroll">
         <table class="w-full">
           <tr class="bg-gray-300">

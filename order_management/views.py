@@ -274,7 +274,6 @@ def export_excel(request):
 
     df = pd.DataFrame(list(data))
 
-    print(df.empty)
     if not df.empty:
         df.columns = [
             "ID",
@@ -299,4 +298,35 @@ def export_excel(request):
         content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
     response["Content-Disposition"] = 'attachment; filename="cantinazo.xlsx"'
+    return response
+
+
+def export_product_excel(request):
+
+    data = Product.objects.annotate(sold=Count("orderlines__pk")).values(
+        "name", "price", "stock", "sold"
+    )
+
+    df = pd.DataFrame(list(data))
+
+    print(df.empty)
+    if not df.empty:
+        df.columns = [
+            "Nombre",
+            "Precio",
+            "Disponibles",
+            "Vendidos",
+        ]
+
+    output = io.BytesIO()
+
+    with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
+        df.to_excel(writer, sheet_name="Sheet1", index=False)
+    output.seek(0)
+    excel_data = output.getvalue()
+    response = HttpResponse(
+        excel_data,
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+    response["Content-Disposition"] = 'attachment; filename="productos.xlsx"'
     return response

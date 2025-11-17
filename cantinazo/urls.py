@@ -67,4 +67,7 @@ urlpatterns = [
         views.ProductListView.as_view(),
         name="product-list",
     ),
+    path(
+        "export_product_excel", views.export_product_excel, name="export-product-excel"
+    ),
 ]
