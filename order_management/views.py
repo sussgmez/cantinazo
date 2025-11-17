@@ -269,6 +269,7 @@ def export_excel(request):
             "student__grade_display",
             "student__section",
             "product__name",
+            "product__price",
         )
     )
 
@@ -285,6 +286,7 @@ def export_excel(request):
             "Grado",
             "Sección",
             "Producto",
+            "Precio del producto",
         ]
 
     output = io.BytesIO()
