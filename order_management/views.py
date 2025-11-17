@@ -192,7 +192,7 @@ def order_update(request, pk):
             message = f"+{order.representative.phone_code} {order.representative.phone_number}: {order.representative.name} ha realizado una nueva orden."
 
         send_whatsapp_message("+584248377782", message)
-        send_whatsapp_message("+584143939270", message)
+        send_whatsapp_message("+584121665210", message)
         send_whatsapp_message("+584123517748", message)
 
         response = HttpResponse(status=204)
@@ -309,7 +309,6 @@ def export_product_excel(request):
 
     df = pd.DataFrame(list(data))
 
-    print(df.empty)
     if not df.empty:
         df.columns = [
             "Nombre",
