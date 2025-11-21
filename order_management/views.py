@@ -331,3 +331,33 @@ def export_product_excel(request):
     )
     response["Content-Disposition"] = 'attachment; filename="productos.xlsx"'
     return response
+
+
+def export_representative_excel(request):
+
+    data = (
+        Representative.objects.filter(orders__closed=True)
+        .values("name", "phone_number")
+        .distinct()
+    )
+
+    df = pd.DataFrame(list(data))
+
+    if not df.empty:
+        df.columns = [
+            "Nombre",
+            "Nro. de teléfono",
+        ]
+
+    output = io.BytesIO()
+
+    with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
+        df.to_excel(writer, sheet_name="Sheet1", index=False)
+    output.seek(0)
+    excel_data = output.getvalue()
+    response = HttpResponse(
+        excel_data,
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+    response["Content-Disposition"] = 'attachment; filename="representatives.xlsx"'
+    return response

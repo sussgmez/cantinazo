@@ -68,6 +68,11 @@ urlpatterns = [
         name="product-list",
     ),
     path(
-        "export_product_excel", views.export_product_excel, name="export-product-excel"
+        "export_product_excel/", views.export_product_excel, name="export-product-excel"
+    ),
+    path(
+        "export_representative_excel/",
+        views.export_representative_excel,
+        name="export-representative-excel",
     ),
 ]
