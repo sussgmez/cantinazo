@@ -1,0 +1,11 @@
+<div class="bg-white rounded-md p-4 max-w-sm" onclick="event.stopPropagation()">
+  <p class="font-semibold mb-2">¿Está seguro que desea quitar al estudiante {{ student.name }}?</p>
+
+  <form hx-post="{% url 'student-delete' student.pk %}" hx-on:htmx:after-request="$('#student-confirm-delete').empty();$('#student-confirm-delete').hide();">
+    {% csrf_token %}
+    <div class="flex gap-4 justify-end">
+      <button class="text-xs font-semibold" onclick="event.preventDefault();$('#student-confirm-delete').empty();$('#student-confirm-delete').hide();">Cancelar</button>
+      <button class="text-xs font-semibold bg-red-700 text-white p-2 rounded-md cursor-pointer hover:bg-red-700/90">Eliminar</button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,20 @@
+<div class="rounded-md overflow-hidden h-64 p-1 border border-gray-200 bg-gray-100 mb-2 overflow-y-scroll">
+  {% for orderline in orderlines %}
+    <div class="flex justify-between p-2 items-center bg-white rounded-md mb-1">
+      <div>
+        <p class="text-xs font-bold">{{ orderline.product.name }}</p>
+        <p class="text-xs font-medium">{{ orderline.product.price }} $</p>
+      </div>
+      <form hx-post="{% url 'orderline-delete' %}">
+        {% csrf_token %}
+        <input type="hidden" name="orderline" value="{{ orderline.pk }}" />
+        <button class="text-xs p-1 font-semibold rounded text-red-700 border border-red-200 cursor-pointer">Quitar</button>
+      </form>
+    </div>
+  {% empty %}
+    <div class="bg-gray-200 p-3 rounded-md">
+      <p class="text-xs font-semibold text-black/80">No se ha añadido ningún producto para {{ student.name }}</p>
+    </div>
+  {% endfor %}
+</div>
+<div hx-get="{% url 'product-list' %}?order={{ order.pk }}&student={{ student.pk }}" hx-trigger="load"></div>

@@ -1,37 +1,50 @@
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
 
-class ExchangeRate(models.Model):
-    rate = models.DecimalField(_("Tasa de cambio"), max_digits=10, decimal_places=2)
-
-
-class Representative(models.Model):
-    id = models.IntegerField(_("ID"), unique=True, primary_key=True)
-    name = models.CharField(_("Nombre"), max_length=100, blank=True, null=True)
-    phone_code = models.CharField(_("Código telefónico"), max_length=3)
-    phone_number = models.CharField(_("Nro. de teléfono"), max_length=10)
+class Event(models.Model):
+    name = models.CharField(_("Nombre"), max_length=100)
+    scheduled_for = models.DateField(_("Fecha"))
+    active = models.BooleanField(_("Activo"), default=False)
 
     def __str__(self):
         return self.name
 
 
+class ExchangeRate(models.Model):
+    rate = models.FloatField(_("Tasa de cambio"))
+    created_at = models.DateTimeField(_("Fecha de creación"), auto_now_add=True)
+
+    def __str__(self):
+        return f"{str(self.rate)} Bs. | {self.created_at.strftime("%d/%m/%Y")}"
+
+
+class Representative(models.Model):
+    id = models.IntegerField(_("ID"), unique=True, primary_key=True)
+    first_name = models.CharField(_("Nombre"), max_length=100, blank=True, null=True)
+    last_name = models.CharField(_("Apellido"), max_length=100, blank=True, null=True)
+    phone_code = models.CharField(_("Código telefónico"), max_length=3)
+    phone_number = models.CharField(_("Nro. de teléfono"), max_length=10)
+
+    def __str__(self):
+        return self.first_name
+
+
 class Student(models.Model):
     GRADE_CHOICES = [
-        ("1", "1er. grado"),
-        ("2", "2do. grado"),
-        ("3", "3er. grado"),
-        ("4", "4to. grado"),
-        ("5", "5to. grado"),
-        ("6", "6to. grado"),
-        ("7", "1er. año"),
-        ("8", "2do. año"),
-        ("9", "3er. año"),
-        ("10", "4to. año"),
-        ("11", "5to. año"),
+        ("1er. grado", "1er. grado"),
+        ("2do. grado", "2do. grado"),
+        ("3er. grado", "3er. grado"),
+        ("4to. grado", "4to. grado"),
+        ("5to. grado", "5to. grado"),
+        ("6to. grado", "6to. grado"),
+        ("1er. año", "1er. año"),
+        ("2do. año", "2do. año"),
+        ("3er. año", "3er. año"),
+        ("4to. año", "4to. año"),
+        ("5to. año", "5to. año"),
     ]
     SECTION_CHOICES = [
         ("U", "U"),
@@ -39,8 +52,9 @@ class Student(models.Model):
         ("B", "B"),
     ]
     name = models.CharField(_("Estudiante"), max_length=100)
-    grade = models.CharField(_("Grado"), max_length=20, choices=GRADE_CHOICES)
-    section = models.CharField(_("Sección"), max_length=20, choices=SECTION_CHOICES)
+    grade = models.CharField(_("Grado"), max_length=15, choices=GRADE_CHOICES)
+    section = models.CharField(_("Sección"), max_length=1, choices=SECTION_CHOICES)
+
     representative = models.ForeignKey(
         Representative,
         verbose_name=_("Representante"),
@@ -78,14 +92,15 @@ class Order(models.Model):
     reference_number = models.IntegerField(
         _("Nro. de referencia"), blank=True, null=True
     )
+    event = models.ForeignKey(Event, verbose_name=_("Evento"), on_delete=models.CASCADE)
+
     rejected = models.BooleanField(_("Orden rechazada"), default=False)
     closed = models.BooleanField(_("Orden cerrada"), default=False)
     checked = models.BooleanField(_("Orden confirmada"), default=False)
-
     created_at = models.DateTimeField(_("Fecha de creación"), auto_now_add=True)
 
     def __str__(self):
-        return f'ORDEN #{self.pk} - {self.representative.name} - {"Cerrada" if self.closed else "Abierta"}'
+        return f'ORDEN #{self.pk} - {self.representative.first_name} - {"Cerrada" if self.closed else "Abierta"}'
 
 
 class OrderLine(models.Model):
@@ -106,6 +121,12 @@ class OrderLine(models.Model):
         verbose_name=_("Producto"),
         on_delete=models.CASCADE,
         related_name="orderlines",
+    )
+    exchange_rate = models.ForeignKey(
+        ExchangeRate,
+        verbose_name=_("Tasa de cambio"),
+        on_delete=models.CASCADE,
+        default=1,
     )
 
 

@@ -19,3 +19,7 @@ const handleInputUpdatePaymentMethod = (element) => {
         $('#id_update_reference_number').attr('required', false)
     }
 }
+
+setTimeout(() => {
+    $('#messages').fadeOut()
+}, 5000);   

@@ -1,5 +1,13 @@
 from django.contrib import admin
-from .models import ExchangeRate, Order, OrderLine, Student, Representative, Product
+from .models import (
+    ExchangeRate,
+    Order,
+    OrderLine,
+    Student,
+    Representative,
+    Product,
+    Event,
+)
 
 
 @admin.register(ExchangeRate)
@@ -29,3 +37,8 @@ class OrderLineInline(admin.TabularInline):
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     inlines = [OrderLineInline]
+
+
+@admin.register(Event)
+class EventAdmin(admin.ModelAdmin):
+    pass

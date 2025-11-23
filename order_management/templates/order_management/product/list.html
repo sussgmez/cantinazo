@@ -1,0 +1,26 @@
+<div class="h-64 flex flex-col border border-gray-400 rounded-md p-1">
+  <div class="p-2 bg-black rounded-md mb-2">
+    <p class="font-bold text-xs text-white">Productos disponibles</p>
+  </div>
+  <div class="overflow-hidden h-full overflow-y-scroll">
+    {% for product in product_list %}
+      <div class="flex justify-between p-2 items-center">
+        <div>
+          <p class="text-xs font-bold">{{ product.name }}</p>
+          <p class="text-xs font-medium">{{ product.price }} $</p>
+        </div>
+        <form hx-post="{% if product.stock > 0 %}{% url 'orderline-create' %}{% endif %}" hx-swap="none">
+          {% csrf_token %}
+          <input type="hidden" name="product" value="{{ product.pk }}" />
+          <input type="hidden" name="student" value="{{ student }}" />
+          <input type="hidden" name="order" value="{{ order }}" />
+          {% if product.stock > 0 %}
+            <button class="text-xs p-1.5 font-semibold rounded text-green-700 border border-green-200">Añadir</button>
+          {% else %}
+            <p class="text-xs text-red-800 font-semibold">Agotado</p>
+          {% endif %}
+        </form>
+      </div>
+    {% endfor %}
+  </div>
+</div>

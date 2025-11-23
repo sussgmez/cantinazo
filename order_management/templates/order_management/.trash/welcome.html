@@ -9,11 +9,7 @@
         <img class="h-full object-contain" src="{% static 'img/flex1.png' %}" alt="" />
       </div>
       <div class="h-full">
-        {% if next_event %}
-          <a href="{% url 'home' next_event.pk %}" class="p-2 block bg-sky-900 text-white font-bold text-center text-3xl rounded">PEDIDO</a>
-        {% else %}
-          <p class="text-sky-200 font-bold text-2xl text-center">Mantente al tanto de nuestros próximos eventos.</p>
-        {% endif %}
+        <a href="{% url 'home' %}" class="p-2 block bg-sky-900 text-white font-bold text-center text-3xl rounded">PEDIDO</a>
       </div>
       <div class="h-full flex justify-center">
         <img class="h-full object-contain" src="{% static 'img/flex2.png' %}" alt="" />

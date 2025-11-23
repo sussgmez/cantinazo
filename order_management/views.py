@@ -1,16 +1,248 @@
 import pandas as pd
 import io
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views.generic import TemplateView, ListView, CreateView
 from django.db.models import Sum, Case, When, Value, CharField, Count
-from django.core.exceptions import MultipleObjectsReturned
-from .models import Student, Representative, Product, Order, OrderLine, ExchangeRate
+from django.contrib import messages
+from .models import (
+    Student,
+    Representative,
+    Product,
+    Order,
+    OrderLine,
+    ExchangeRate,
+    Event,
+)
 from .utils import send_whatsapp_message
 
 
 class WelcomeView(TemplateView):
     template_name = "order_management/welcome.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["next_event"] = Event.objects.filter(active=True).first()
+        return context
+
+
+class HomeView(TemplateView):
+    template_name = "order_management/home.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class RepresentativeCreateView(CreateView):
+    model = Representative
+    template_name = "order_management/representative/create.html"
+    fields = ["phone_code", "phone_number", "first_name", "last_name"]
+
+    def form_valid(self, form):
+        representative = form.save(commit=False)
+        representative.id = int(
+            f"{representative.phone_code}{representative.phone_number}"
+        )
+        representative.save()
+        context = {}
+        context["representative"] = representative.id
+        context["event"] = self.request.POST.get("event")
+
+        return render(self.request, "order_management/order_view.html", context=context)
+
+
+class StudentListView(ListView):
+    model = Student
+    template_name = "order_management/student/list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        representative = self.request.GET.get("representative")
+        context["representative"] = representative
+        event = self.request.GET.get("event")
+        context["event"] = event
+
+        order = Order.objects.get_or_create(
+            representative_id=representative, closed=False, event_id=event
+        )[0]
+        context["order"] = order
+        return context
+
+    def get_queryset(self):
+        return Student.objects.filter(
+            representative__id=self.request.GET.get("representative")
+        )
+
+
+class StudentCreateView(CreateView):
+    model = Student
+    template_name = "order_management/student/create.html"
+    fields = ["representative", "name", "section", "grade"]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["grades"] = Student.GRADE_CHOICES
+        context["representative"] = self.request.GET.get("representative")
+        context["sections"] = Student.SECTION_CHOICES
+        return context
+
+    def form_valid(self, form):
+        form.save()
+        response = HttpResponse(status=204)
+        response["HX-Trigger"] = "studentCreated"
+        return response
+
+
+class OrderStudentView(TemplateView):
+    template_name = "order_management/order/order_student.html"
+
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+        response["HX-Trigger"] = "studentChanged"
+
+        return response
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        event = Event.objects.get(pk=self.request.GET.get("event"))
+        try:
+            student = Student.objects.get(pk=self.request.GET.get("student"))
+            order = Order.objects.get_or_create(
+                representative=student.representative, closed=False, event=event
+            )[0]
+            context["student"] = student
+            context["order"] = order
+            context["orderlines"] = OrderLine.objects.filter(
+                order=order, student=student
+            )
+        except:
+            pass
+
+        return context
+
+
+class ProductListView(ListView):
+    model = Product
+    template_name = "order_management/product/list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["order"] = self.request.GET.get("order")
+        context["student"] = self.request.GET.get("student")
+        return context
+
+
+class OrderLineCreateView(CreateView):
+    model = OrderLine
+    template_name = "order_management/orderline/create.html"
+    fields = ["student", "order", "product"]
+
+    def form_valid(self, form):
+        form.save()
+        response = HttpResponse(status=204)
+        response["HX-Trigger"] = "orderlineCreated"
+        return response
+
+
+def order_close(request, pk):
+
+    if request.method == "POST":
+        order = Order.objects.get(pk=pk)
+        order.closed = True
+        order.save()
+
+        messages.success(request, "Pedido realizado con éxito")
+
+        return redirect("home", order.event.pk)
+
+    elif request.method == "GET":
+        context = {}
+        order = Order.objects.get(pk=pk)
+        context["order"] = order
+
+        context["exchange_rate"] = (
+            ExchangeRate.objects.all().order_by("created_at").first()
+        )
+        context["total"] = (
+            order.orderlines.all().aggregate(total=Sum("product__price"))["total"]
+            if order.orderlines.all()
+            else 0
+        )
+
+        return render(
+            request, "order_management/order/order_close.html", context=context
+        )
+
+
+def orderline_delete(request):
+    if request.method == "POST":
+        orderline = OrderLine.objects.get(pk=request.POST.get("orderline"))
+        orderline.delete()
+
+        response = HttpResponse(status=204)
+        response["HX-Trigger"] = "orderlineRemoved"
+        return response
+
+
+def student_remove(request, pk):
+    if request.method == "GET":
+        context = {}
+        context["student"] = Student.objects.get(pk=pk)
+        return render(request, "order_management/student/delete.html", context=context)
+
+    elif request.method == "POST":
+        student = Student.objects.get(pk=pk)
+        student.representative = None
+        student.save()
+
+        response = HttpResponse(status=204)
+        response["HX-Trigger"] = "studentRemoved"
+        return response
+
+
+"""
+
+class EventView(TemplateView):
+    template_name = "order_management/event/detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class RepresentativeCreateView(CreateView):
+    model = Representative
+    template_name = "order_management/representative/create.html"
+    fields = [""]
+
+
+# class RepresentativeCreateView(CreateView):
+#     model = Representative
+#     template_name = "order_management/representative_create.html"
+#     fields = ["name", "phone_code", "phone_number"]
+
+#     def form_valid(self, form):
+#         representative = form.save(commit=False)
+#         representative.id = int(
+#             f"{representative.phone_code}{representative.phone_number}"
+#         )
+#         representative.save()
+
+#         context = {}
+#         context["representative"] = representative.id
+#         return render(self.request, "order_management/open_order.html", context=context)
+
+
+class WelcomeView(TemplateView):
+    template_name = "order_management/welcome.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["event"] = (
+            Event.objects.filter(active=True).order_by("scheduled_for").first()
+        )
+        return context
 
 
 class HomeView(TemplateView):
@@ -44,23 +276,6 @@ class AdminOrderListView(ListView):
 
         context["exchange_rate"] = ExchangeRate.objects.get(pk=1)
         return context
-
-
-class RepresentativeCreateView(CreateView):
-    model = Representative
-    template_name = "order_management/representative_create.html"
-    fields = ["name", "phone_code", "phone_number"]
-
-    def form_valid(self, form):
-        representative = form.save(commit=False)
-        representative.id = int(
-            f"{representative.phone_code}{representative.phone_number}"
-        )
-        representative.save()
-
-        context = {}
-        context["representative"] = representative.id
-        return render(self.request, "order_management/open_order.html", context=context)
 
 
 class StudentCreateView(CreateView):
@@ -335,6 +550,7 @@ def export_product_excel(request):
 
 def export_representative_excel(request):
 
+
     data = (
         Representative.objects.filter(orders__closed=True)
         .values("name", "phone_number")
@@ -361,3 +577,4 @@ def export_representative_excel(request):
     )
     response["Content-Disposition"] = 'attachment; filename="representatives.xlsx"'
     return response
+"""

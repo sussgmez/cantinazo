@@ -1,0 +1,117 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+  <div class="bg-sky-900 flex flex-col items-center min-h-screen py-2 px-2 gap-2">
+    <div class="bg-white flex flex-col gap-4 rounded-lg w-full max-w-xl p-8 border-2 border-sky-700/50 shadow-2xl">
+      <div>
+        <p class="font-bold text-xl">¡Bienvenido al Sistema de Pedidos de Mapis!</p>
+      </div>
+      <div>
+        <div class="mb-2 border-b">
+          <p class="font-bold">Ingrese sus datos para iniciar su pedido</p>
+        </div>
+      </div>
+
+      <form class="flex flex-col gap-1">
+        <div class="flex gap-1">
+          <select class="bg-gray-200 p-2 text-sm font-semibold rounded w-full flex-1">
+            <option>+58</option>
+          </select>
+          <input class="bg-gray-200 p-2 text-sm font-semibold rounded w-full flex-6" type="text" placeholder="4123456789" />
+        </div>
+        <div class="flex gap-1">
+          <input class="bg-gray-200 p-2 text-sm font-semibold rounded w-full" type="text" placeholder="Nombre" />
+          <input class="bg-gray-200 p-2 text-sm font-semibold rounded w-full" type="text" placeholder="Apellido" />
+        </div>
+        <button class="text-sm font-semibold p-2 bg-sky-700 text-white rounded hover:bg-sky-600 cursor-pointer transition-colors">Iniciar pedido</button>
+      </form>
+
+      <div>
+        <div class="mb-2 border-b">
+          <p class="font-bold">Estudiantes</p>
+        </div>
+        <div>
+          <div>
+            <p class="font-bold text-sm">Añada o seleccione a su estudiante</p>
+          </div>
+          <div class="grid grid-cols-2 gap-0.5">
+            <button class="rounded p-2.5 font-semibold text-sky-900 text-xs text-left cursor-pointer bg-sky-500/30">Pablo - 6to. grado C</button>
+            <button class="rounded p-2.5 font-semibold text-sky-900/90 text-xs text-left cursor-pointer bg-sky-500/15">Antonio - 6to. grado C</button>
+            <button class="rounded p-2.5 font-semibold text-sky-900/90 text-xs text-left cursor-pointer bg-sky-500/15">José - 6to. grado C</button>
+            <button class="text-xs underline font-bold p-2 text-sky-700/80 rounded cursor-pointer transition-colors">Añadir estudiante +</button>
+          </div>
+          <div>
+            <p class="font-bold text-sm">Pedido de Pablo</p>
+          </div>
+          <div class="border border-gray-400 rounded overflow-hidden max-h-64 overflow-y-scroll">
+            <div class="flex justify-between p-2 items-center not-last:border-b">
+              <div>
+                <p class="text-sm font-bold">Refresco</p>
+                <p class="text-xs font-medium">252,00 Bs.</p>
+              </div>
+              <button class="text-xs p-1.5 font-semibold bg-red-400/20 rounded text-red-700 border border-red-200">Quitar</button>
+            </div>
+            <div class="flex justify-between p-2 items-center not-last:border-b">
+              <div>
+                <p class="text-sm font-bold">Refresco</p>
+                <p class="text-xs font-medium">252,00 Bs.</p>
+              </div>
+              <button class="text-xs p-1.5 font-semibold bg-red-400/20 rounded text-red-700 border border-red-200">Quitar</button>
+            </div>
+            <div class="flex justify-between p-2 items-center not-last:border-b">
+              <div>
+                <p class="text-sm font-bold">Refresco</p>
+                <p class="text-xs font-medium">252,00 Bs.</p>
+              </div>
+              <button class="text-xs p-1.5 font-semibold bg-red-400/20 rounded text-red-700 border border-red-200">Quitar</button>
+            </div>
+            <div class="flex justify-between p-2 items-center not-last:border-b">
+              <div>
+                <p class="text-sm font-bold">Refresco</p>
+                <p class="text-xs font-medium">252,00 Bs.</p>
+              </div>
+              <button class="text-xs p-1.5 font-semibold bg-red-400/20 rounded text-red-700 border border-red-200">Quitar</button>
+            </div>
+            <div class="flex justify-between p-2 items-center not-last:border-b">
+              <div>
+                <p class="text-sm font-bold">Refresco</p>
+                <p class="text-xs font-medium">252,00 Bs.</p>
+              </div>
+              <button class="text-xs p-1.5 font-semibold bg-red-400/20 rounded text-red-700 border border-red-200">Quitar</button>
+            </div>
+            <div class="flex justify-between p-2 items-center not-last:border-b">
+              <div>
+                <p class="text-sm font-bold">Refresco</p>
+                <p class="text-xs font-medium">252,00 Bs.</p>
+              </div>
+              <button class="text-xs p-1.5 font-semibold bg-red-400/20 rounded text-red-700 border border-red-200">Quitar</button>
+            </div>
+          </div>
+          <div>
+            <p class="font-bold text-sm">Producto disponibles</p>
+          </div>
+          <div class="border border-gray-400 rounded overflow-hidden max-h-64 overflow-y-scroll">
+            <div class="flex justify-between p-2 items-center not-last:border-b">
+              <div>
+                <p class="text-sm font-bold">Refresco</p>
+                <p class="text-xs font-medium">252,00 Bs.</p>
+              </div>
+              <button class="text-xs p-1.5 font-semibold bg-green-400/20 rounded text-green-700 border border-green-200">Añadir</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="mb-2 border-b">
+          <p class="font-bold">Pedidos realizados</p>
+        </div>
+        <div>
+          <div>
+            <p>Pedido #15</p>
+            <div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

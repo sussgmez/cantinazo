@@ -1,0 +1,39 @@
+{% load static %}
+{% load order_management_extra %}
+<form method="post" action="{% url 'order-close' order.pk %}" class="flex flex-col gap-4" onsubmit="{% if total <= 0 %}event.preventDefault(){% endif %}">
+  {% csrf_token %}
+  <div>
+    <div class="mb-3">
+      <p class="text-sm font-bold py-1">Pedido</p>
+    </div>
+    <div class="flex gap-1 mb-1">
+      <select class="bg-gray-100 border border-gray-200 p-2.5 text-xs font-semibold rounded-md w-full" name="payment_method" id="id_payment_method" onchange="handleInputPaymentMethod(this)">
+        <option value="0">Pago móvil</option>
+        <option value="1">Efectivo</option>
+      </select>
+      <input class="bg-gray-100 border border-gray-200 p-2.5 text-xs font-semibold rounded-md w-full" name="reference_number" id="id_reference_number" type="text" pattern="[0-9]+" placeholder="Nro. de referencia" required />
+    </div>
+    <div id="id_payment_details" class="p-2 bg-gray-100 border border-gray-200 mb-1 rounded-md">
+      <p class="font-bold mb-2 text-sm">Datos pago móvil</p>
+      <div class="flex justify-between mb-1">
+        <p class="text-xs font-medium">Nro. de teléfono</p>
+        <p class="text-xs">0424-8818-681</p>
+      </div>
+      <div class="flex justify-between mb-1">
+        <p class="text-xs font-medium">Cédula</p>
+        <p class="text-xs">V-8.992.518</p>
+      </div>
+      <div class="flex justify-between mb-1">
+        <p class="text-xs font-medium">Banco</p>
+        <p class="text-xs">BNC (0191)</p>
+      </div>
+      <div class="m-auto w-fit">
+        <img class="max-h-32 max-w-32" src="{% static 'img/qr.jpg' %}" alt="" />
+      </div>
+    </div>
+  </div>
+  <p class="text-right text-sm font-bold mb-2">Monto total: {{ total|multiply:exchange_rate.rate }}Bs.</p>
+  {% if total > 0 %}
+    <button class="w-full p-2 text-xs bg-emerald-600 text-white rounded-md hover:bg-emerald-700 cursor-pointer font-bold">Realizar pedido</button>
+  {% endif %}
+</form>
