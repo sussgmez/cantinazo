@@ -71,6 +71,9 @@ class Student(models.Model):
 class Product(models.Model):
     name = models.CharField(_("Producto"), max_length=100)
     price = models.FloatField(_("Precio"))
+    event = models.ForeignKey(
+        Event, verbose_name=_("Evento"), on_delete=models.CASCADE, blank=True, null=True
+    )
     stock = models.IntegerField(_("Disponible"))
 
     def __str__(self):
@@ -98,9 +101,16 @@ class Order(models.Model):
     closed = models.BooleanField(_("Orden cerrada"), default=False)
     checked = models.BooleanField(_("Orden confirmada"), default=False)
     created_at = models.DateTimeField(_("Fecha de creación"), auto_now_add=True)
+    exchange_rate = models.ForeignKey(
+        ExchangeRate,
+        verbose_name=_("Tasa de cambio"),
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
-        return f'ORDEN #{self.pk} - {self.representative.first_name} - {"Cerrada" if self.closed else "Abierta"}'
+        return f'ORDEN #{self.pk} - {self.representative.first_name} - {"Cerrada" if self.closed else "Abierta"} {self.exchange_rate}'
 
 
 class OrderLine(models.Model):
@@ -121,12 +131,6 @@ class OrderLine(models.Model):
         verbose_name=_("Producto"),
         on_delete=models.CASCADE,
         related_name="orderlines",
-    )
-    exchange_rate = models.ForeignKey(
-        ExchangeRate,
-        verbose_name=_("Tasa de cambio"),
-        on_delete=models.CASCADE,
-        default=1,
     )
 
 

@@ -2,6 +2,7 @@
 {% load order_management_extra %}
 <form method="post" action="{% url 'order-close' order.pk %}" class="flex flex-col gap-4" onsubmit="{% if total <= 0 %}event.preventDefault(){% endif %}">
   {% csrf_token %}
+  <input type="hidden" name="exchange_rate" value="{{ exchange_rate.pk }}" />
   <div>
     <div class="mb-3">
       <p class="text-sm font-bold py-1">Pedido</p>
@@ -32,7 +33,7 @@
       </div>
     </div>
   </div>
-  <p class="text-right text-sm font-bold mb-2">Monto total: {{ total|multiply:exchange_rate.rate }}Bs.</p>
+  <p class="text-right text-sm font-bold mb-2">Monto total: {{ total|multiply:exchange_rate.rate|floatformat:2 }}Bs.</p>
   {% if total > 0 %}
     <button class="w-full p-2 text-xs bg-emerald-600 text-white rounded-md hover:bg-emerald-700 cursor-pointer font-bold">Realizar pedido</button>
   {% endif %}

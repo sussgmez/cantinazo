@@ -1,14 +1,20 @@
 from django.conf import settings
 from django.contrib import admin
 from django.urls import path
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.decorators import login_required
 from order_management import views
 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("accounts/login/", LoginView.as_view(), name="login"),
+    path(
+        "staff/event/<int:event>/",
+        login_required(views.StaffEventView.as_view()),
+        name="staff-event",
+    ),
+    path("staff/login/", LoginView.as_view(), name="login"),
+    path("staff/logout/", LogoutView.as_view(), name="logout"),
     path("", views.WelcomeView.as_view(), name="welcome"),
     path("evento/<int:event>/pedido/", views.HomeView.as_view(), name="home"),
     path(
@@ -24,6 +30,22 @@ urlpatterns = [
         views.OrderStudentView.as_view(),
         name="order-student",
     ),
+    path("order/list/", views.OrderListView.as_view(), name="order-list"),
+    path(
+        "staff/order/list/",
+        login_required(views.StaffOderList.as_view()),
+        name="staff-order-list",
+    ),
+    path(
+        "staff/product/list/<int:event>/",
+        login_required(views.StaffProductListView.as_view()),
+        name="staff-product-list",
+    ),
+    path(
+        "staff/product/create/",
+        login_required(views.StaffProductCreateView.as_view()),
+        name="staff-product-create",
+    ),
     path("product/list/", views.ProductListView.as_view(), name="product-list"),
     path(
         "orderline/create/",
@@ -32,6 +54,13 @@ urlpatterns = [
     ),
     path("orderline/delete/", views.orderline_delete, name="orderline-delete"),
     path("order/close/<int:pk>/", views.order_close, name="order-close"),
+    path(
+        "order/update/status/<int:pk>/",
+        views.order_update_status,
+        name="order-update-status",
+    ),
+    path("order/export/", views.export_orders, name="export-orders"),
+    path("product/export/", views.export_products, name="export-products"),
 ]
 """
 path(

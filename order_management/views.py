@@ -116,10 +116,31 @@ class OrderStudentView(TemplateView):
             context["orderlines"] = OrderLine.objects.filter(
                 order=order, student=student
             )
+            context["exchange_rate"] = (
+                ExchangeRate.objects.all().order_by("-created_at").first()
+            )
         except:
             pass
 
+        context["event"] = event
         return context
+
+
+class OrderListView(ListView):
+    model = Order
+    template_name = "order_management/order/list.html"
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(
+                representative_id=self.request.GET.get("representative"),
+                event_id=self.request.GET.get("event"),
+                closed=True,
+            )
+            .annotate(total=Sum("orderlines__product__price"))
+        )
 
 
 class ProductListView(ListView):
@@ -130,7 +151,13 @@ class ProductListView(ListView):
         context = super().get_context_data(**kwargs)
         context["order"] = self.request.GET.get("order")
         context["student"] = self.request.GET.get("student")
+        context["exchange_rate"] = (
+            ExchangeRate.objects.all().order_by("-created_at").first()
+        )
         return context
+
+    def get_queryset(self):
+        return super().get_queryset().filter(event_id=self.request.GET.get("event"))
 
 
 class OrderLineCreateView(CreateView):
@@ -145,10 +172,73 @@ class OrderLineCreateView(CreateView):
         return response
 
 
+class StaffEventView(TemplateView):
+    template_name = "order_management/staff/staff.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["grades"] = Student.GRADE_CHOICES
+        context["event"] = kwargs["event"]
+        return context
+
+
+class StaffOderList(ListView):
+    model = Order
+    template_name = "order_management/staff/order/list.html"
+
+    def get_queryset(self):
+        queryset = (
+            Order.objects.filter(closed=True)
+            .annotate(total=Sum("orderlines__product__price"))
+            .order_by("-pk")
+        )
+        return queryset
+
+
+class StaffProductListView(ListView):
+    model = Product
+    template_name = "order_management/staff/product/list.html"
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(event=self.kwargs.get("event"))
+            .annotate(sold=Count("orderlines"))
+        )
+
+
+class StaffProductCreateView(CreateView):
+    model = Product
+    template_name = "order_management/staff/product/create.html"
+    fields = ["name", "price", "stock", "event"]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["event"] = self.request.GET.get("event")
+        return context
+
+    def form_valid(self, form):
+        form.save()
+        response = HttpResponse(status=204)
+        response["HX-Trigger"] = "productCreated"
+        return response
+
+
 def order_close(request, pk):
 
     if request.method == "POST":
         order = Order.objects.get(pk=pk)
+        print(request.POST.get("reference_number"))
+        order.reference_number = (
+            request.POST.get("reference_number")
+            if request.POST.get("reference_number") != ""
+            else None
+        )
+        order.payment_method = request.POST.get("payment_method")
+        order.exchange_rate = ExchangeRate.objects.get(
+            pk=request.POST.get("exchange_rate")
+        )
         order.closed = True
         order.save()
 
@@ -162,8 +252,9 @@ def order_close(request, pk):
         context["order"] = order
 
         context["exchange_rate"] = (
-            ExchangeRate.objects.all().order_by("created_at").first()
+            ExchangeRate.objects.all().order_by("-created_at").first()
         )
+
         context["total"] = (
             order.orderlines.all().aggregate(total=Sum("product__price"))["total"]
             if order.orderlines.all()
@@ -173,6 +264,29 @@ def order_close(request, pk):
         return render(
             request, "order_management/order/order_close.html", context=context
         )
+
+
+def order_update_status(request, pk):
+    if request.method == "GET":
+        if request.user.is_staff:
+            order = Order.objects.get(pk=pk)
+
+            status = request.GET["status"]
+            if status == "0":
+                order.rejected = False
+                order.checked = True
+            elif status == "1":
+                order.rejected = True
+                order.checked = False
+            elif status == "2":
+                order.checked = False
+                order.rejected = False
+
+            order.save()
+
+            response = HttpResponse(status=204)
+            response["HX-Trigger"] = "orderStatusUpdated"
+            return response
 
 
 def orderline_delete(request):
@@ -194,11 +308,123 @@ def student_remove(request, pk):
     elif request.method == "POST":
         student = Student.objects.get(pk=pk)
         student.representative = None
+        for orderline in OrderLine.objects.filter(student=student, order__closed=False):
+            orderline.delete()
+
         student.save()
 
         response = HttpResponse(status=204)
         response["HX-Trigger"] = "studentRemoved"
         return response
+
+
+def export_orders(request):
+    grade_choices = Student.GRADE_CHOICES
+    student_grade_display_case = Case(
+        *[
+            When(student__grade=valor_db, then=Value(label))
+            for valor_db, label in grade_choices
+        ],
+        default=Value("Desconocido"),
+        output_field=CharField(),
+    )
+
+    payment_method_choices = Order.PAYMENT_METHOD_CHOICES
+    order_payment_method_display_case = Case(
+        *[
+            When(order__payment_method=valor_db, then=Value(label))
+            for valor_db, label in payment_method_choices
+        ],
+        default=Value("Desconocido"),
+        output_field=CharField(),
+    )
+
+    grade = request.GET.get("grade")
+
+    if grade:
+        orderlines = OrderLine.objects.filter(order__closed=True, student__grade=grade)
+    else:
+        orderlines = OrderLine.objects.filter(order__closed=True)
+
+    data = (
+        orderlines.exclude(order__rejected=True)
+        .annotate(total=Sum("order__orderlines__product__price"))
+        .annotate(student__grade_display=student_grade_display_case)
+        .annotate(order__payment_method_display=order_payment_method_display_case)
+        .values(
+            "order__pk",
+            "order__representative__first_name",
+            "order__representative__last_name",
+            "order__payment_method_display",
+            "order__reference_number",
+            "total",
+            "student__name",
+            "student__grade_display",
+            "student__section",
+            "product__name",
+            "product__price",
+        )
+    )
+
+    df = pd.DataFrame(list(data))
+
+    if not df.empty:
+        df.columns = [
+            "ID",
+            "Nombre del representante",
+            "Apellido del representante",
+            "Método de pago",
+            "# de referencia",
+            "Total del pago",
+            "Nombre del estudiante",
+            "Grado",
+            "Sección",
+            "Producto",
+            "Precio del producto",
+        ]
+
+    output = io.BytesIO()
+
+    with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
+        df.to_excel(writer, sheet_name="Sheet1", index=False)
+    output.seek(0)
+    excel_data = output.getvalue()
+    response = HttpResponse(
+        excel_data,
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+    response["Content-Disposition"] = 'attachment; filename="pedidos.xlsx"'
+    return response
+
+
+def export_products(request):
+
+    data = Product.objects.annotate(sold=Count("orderlines")).values(
+        "name", "price", "stock", "sold"
+    )
+
+    df = pd.DataFrame(list(data))
+
+    if not df.empty:
+        df.columns = [
+            "Nombre",
+            "Precio",
+            "Disponibles",
+            "Vendidos",
+        ]
+
+    output = io.BytesIO()
+
+    with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
+        df.to_excel(writer, sheet_name="Sheet1", index=False)
+    output.seek(0)
+    excel_data = output.getvalue()
+    response = HttpResponse(
+        excel_data,
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+    response["Content-Disposition"] = 'attachment; filename="productos.xlsx"'
+    return response
 
 
 """

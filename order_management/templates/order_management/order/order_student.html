@@ -1,9 +1,11 @@
+{% load order_management_extra %}
+
 <div class="rounded-md overflow-hidden h-64 p-1 border border-gray-200 bg-gray-100 mb-2 overflow-y-scroll">
   {% for orderline in orderlines %}
     <div class="flex justify-between p-2 items-center bg-white rounded-md mb-1">
       <div>
         <p class="text-xs font-bold">{{ orderline.product.name }}</p>
-        <p class="text-xs font-medium">{{ orderline.product.price }} $</p>
+        <p class="text-xs font-medium">{{ orderline.product.price|floatformat:2 }} $ | {{ orderline.product.price|multiply:exchange_rate.rate|floatformat:2 }} Bs.</p>
       </div>
       <form hx-post="{% url 'orderline-delete' %}">
         {% csrf_token %}
@@ -12,9 +14,15 @@
       </form>
     </div>
   {% empty %}
-    <div class="bg-gray-200 p-3 rounded-md">
-      <p class="text-xs font-semibold text-black/80">No se ha añadido ningún producto para {{ student.name }}</p>
-    </div>
+    {% if student %}
+      <div class="bg-gray-200 p-3 rounded-md">
+        <p class="text-xs font-semibold text-black/80">No se ha añadido ningún producto para {{ student.name }}</p>
+      </div>
+    {% else %}
+      <div class="bg-gray-200 p-3 rounded-md">
+        <p class="text-xs font-semibold text-black/80">Añada su estudiante</p>
+      </div>
+    {% endif %}
   {% endfor %}
 </div>
-<div hx-get="{% url 'product-list' %}?order={{ order.pk }}&student={{ student.pk }}" hx-trigger="load"></div>
+<div hx-get="{% url 'product-list' %}?order={{ order.pk }}&student={{ student.pk }}&event={{ event.pk }}" hx-trigger="load"></div>
