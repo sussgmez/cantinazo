@@ -229,6 +229,17 @@
   .visible {
     visibility: visible;
   }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border-width: 0;
+  }
   .absolute {
     position: absolute;
   }
@@ -417,6 +428,9 @@
   }
   .grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .grid-cols-\[1fr_32px\] {
+    grid-template-columns: 1fr 32px;
   }
   .grid-rows-3 {
     grid-template-rows: repeat(3, minmax(0, 1fr));
@@ -697,6 +711,12 @@
   .object-cover {
     object-fit: cover;
   }
+  .p-0 {
+    padding: calc(var(--spacing) * 0);
+  }
+  .p-0\.5 {
+    padding: calc(var(--spacing) * 0.5);
+  }
   .p-1 {
     padding: calc(var(--spacing) * 1);
   }
@@ -920,6 +940,16 @@
       border-bottom-width: 1px;
     }
   }
+  .peer-checked\:bg-gray-200 {
+    &:is(:where(.peer):checked ~ *) {
+      background-color: var(--color-gray-200);
+    }
+  }
+  .peer-checked\:bg-gray-300 {
+    &:is(:where(.peer):checked ~ *) {
+      background-color: var(--color-gray-300);
+    }
+  }
   .odd\:bg-gray-100 {
     &:nth-child(odd) {
       background-color: var(--color-gray-100);
@@ -1078,6 +1108,11 @@
           background-color: color-mix(in oklab, var(--color-sky-700) 90%, transparent);
         }
       }
+    }
+  }
+  .has-checked\:border-black {
+    &:has(*:checked) {
+      border-color: var(--color-black);
     }
   }
   .lg\:flex {

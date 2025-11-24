@@ -5,11 +5,16 @@
   <div class="mb-3">
     <p class="font-bold text-xs mb-2">Añada o seleccione a su estudiante</p>
     <div class="mb-2" id="student-create" hx-get="{% url 'student-create' %}?representative={{ representative }}" hx-trigger="load"></div>
-    <div class="grid grid-cols-2 gap-1 mb-2">
+    <form class="grid grid-cols-2 gap-1 mb-1" hx-get="{% url 'order-student' %}?event={{ event }}" hx-target="#order-student" hx-trigger="load, change, orderlineCreated from:body, orderlineRemoved from:body">
       {% for student in student_list %}
-        <div class="flex w-full justify-between p-3 rounded-md border border-gray-300">
-          <p class="text-nowrap overflow-ellipsis overflow-hidden text-xs font-semibold">{{ student.name }} - {{ student.grade }} {{ student.section }}</p>
-          <button hx-get="{% url 'student-delete' student.pk %}" hx-target="#student-confirm-delete" onclick="$('#student-confirm-delete').show()">
+        <div class="border border-gray-300 rounded-md overflow-hidden grid grid-cols-[1fr_32px] p-0.5 has-checked:border-black">
+          {% if forloop.first %}
+            <input class="peer sr-only" type="radio" name="student" id="student_{{ student.pk }}" value="{{ student.pk }}" checked />
+          {% else %}
+            <input class="peer sr-only" type="radio" name="student" id="student_{{ student.pk }}" value="{{ student.pk }}" />
+          {% endif %}
+          <label class="cursor-pointer p-2 text-xs font-semibold w-full block rounded peer-checked:bg-gray-200" for="student_{{ student.pk }}">Pedido de {{ student.name }}</label>
+          <button class="cursor-pointer flex items-center justify-center" hx-get="{% url 'student-delete' student.pk %}" hx-target="#student-confirm-delete" onclick="$('#student-confirm-delete').show()" onclick="event.stopPropagation(); event.preventDefault()">
             <svg class="fill-gray-800" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
               <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -20,15 +25,6 @@
           </button>
         </div>
       {% endfor %}
-    </div>
-    <form class="flex flex-col gap-1 mb-1" hx-get="{% url 'order-student' %}?event={{ event }}" hx-target="#order-student" hx-trigger="load, change, orderlineCreated from:body, orderlineRemoved from:body">
-      <select class="shadow-md border border-gray-200 text-xs font-bold p-3 bg-white rounded-md" name="student" id="student">
-        {% for student in student_list %}
-          <option value="{{ student.pk }}">Pedido de {{ student.name }}</option>
-        {% empty %}
-          <option value="">-------</option>
-        {% endfor %}
-      </select>
     </form>
     <div id="order-student"></div>
   </div>
