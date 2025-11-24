@@ -251,6 +251,8 @@ def order_close(request, pk):
         message = f"+{order.representative.phone_code} {order.representative.phone_number}: {order.representative.first_name} ha realizado una nueva orden, nro. de referencia #{order.reference_number}. Por favor confirmar pago."
 
         send_whatsapp_message("+584123517748", message)
+        send_whatsapp_message("+584248377782", message)
+        send_whatsapp_message("+584121665210", message)
 
         messages.success(request, "Pedido realizado con éxito")
 
