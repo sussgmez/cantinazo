@@ -24,7 +24,7 @@
     <form class="flex flex-col gap-1 mb-1" hx-get="{% url 'order-student' %}?event={{ event }}" hx-target="#order-student" hx-trigger="load, change, orderlineCreated from:body, orderlineRemoved from:body">
       <select class="shadow-md border border-gray-200 text-xs font-bold p-3 bg-white rounded-md" name="student" id="student">
         {% for student in student_list %}
-          <option value="{{ student.pk }}">Pedido para {{ student.name }}</option>
+          <option value="{{ student.pk }}">Pedido de {{ student.name }}</option>
         {% empty %}
           <option value="">-------</option>
         {% endfor %}

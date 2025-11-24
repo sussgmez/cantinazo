@@ -24,7 +24,6 @@ class ExchangeRate(models.Model):
 class Representative(models.Model):
     id = models.IntegerField(_("ID"), unique=True, primary_key=True)
     first_name = models.CharField(_("Nombre"), max_length=100, blank=True, null=True)
-    last_name = models.CharField(_("Apellido"), max_length=100, blank=True, null=True)
     phone_code = models.CharField(_("Código telefónico"), max_length=3)
     phone_number = models.CharField(_("Nro. de teléfono"), max_length=10)
 

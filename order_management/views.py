@@ -37,7 +37,7 @@ class HomeView(TemplateView):
 class RepresentativeCreateView(CreateView):
     model = Representative
     template_name = "order_management/representative/create.html"
-    fields = ["phone_code", "phone_number", "first_name", "last_name"]
+    fields = ["phone_code", "phone_number", "first_name"]
 
     def form_valid(self, form):
         representative = form.save(commit=False)
@@ -250,7 +250,7 @@ def order_close(request, pk):
         order.closed = True
         order.save()
 
-        message = f"+{order.representative.phone_code} {order.representative.phone_number}: {order.representative.first_name} {order.representative.last_name} ha realizado una nueva orden, nro. de referencia #{order.reference_number}. Por favor confirmar pago."
+        message = f"+{order.representative.phone_code} {order.representative.phone_number}: {order.representative.first_name} ha realizado una nueva orden, nro. de referencia #{order.reference_number}. Por favor confirmar pago."
 
         send_whatsapp_message("+584123517748", message)
 
@@ -366,7 +366,6 @@ def export_orders(request):
         .values(
             "order__pk",
             "order__representative__first_name",
-            "order__representative__last_name",
             "order__payment_method_display",
             "order__reference_number",
             "total",
@@ -384,7 +383,6 @@ def export_orders(request):
         df.columns = [
             "ID",
             "Nombre del representante",
-            "Apellido del representante",
             "Método de pago",
             "# de referencia",
             "Total del pago",

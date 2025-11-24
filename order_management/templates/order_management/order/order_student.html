@@ -10,13 +10,13 @@
       <form hx-post="{% url 'orderline-delete' %}">
         {% csrf_token %}
         <input type="hidden" name="orderline" value="{{ orderline.pk }}" />
-        <button class="text-xs p-1 font-semibold rounded text-red-700 border border-red-200 cursor-pointer">Quitar</button>
+        <button class="text-xs p-1 font-semibold rounded text-red-700 border border-red-200 cursor-pointer hover:bg-red-100">Quitar</button>
       </form>
     </div>
   {% empty %}
     {% if student %}
-      <div class="bg-gray-200 p-3 rounded-md">
-        <p class="text-xs font-semibold text-black/80">No se ha añadido ningún producto para {{ student.name }}</p>
+      <div class="bg-gray-200 rounded-md cursor-pointer hover:bg-gray-300">
+        <a class="text-xs font-semibold p-3 block text-black/80" href="#product-list">Añadir producto al pedido de {{ student.name }} +</a>
       </div>
     {% else %}
       <div class="bg-gray-200 p-3 rounded-md">
@@ -25,4 +25,4 @@
     {% endif %}
   {% endfor %}
 </div>
-<div hx-get="{% url 'product-list' %}?order={{ order.pk }}&student={{ student.pk }}&event={{ event.pk }}" hx-trigger="load"></div>
+<div hx-get="{% url 'product-list' %}?order={{ order.pk }}&student={{ student.pk }}&event={{ event.pk }}" hx-trigger="load" id="product-list" class="target:scroll-mt-80"></div>
