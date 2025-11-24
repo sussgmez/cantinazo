@@ -1,0 +1,45 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+  <div class="bg-sky-100 flex flex-col items-center min-h-screen py-2 px-2 gap-2">
+    <div class="bg-white flex flex-col rounded-lg w-full max-w-2xl p-4 shadow-2xl">
+      <div class="mb-4 flex gap-2">
+        <p class="font-bold text-xl">¡Bienvenido al Sistema de Pedidos de Mapis!</p>
+        <form class="ml-auto w-fit" action="{% url 'logout' %}" method="post">
+          {% csrf_token %}
+          <button class="text-white font-semibold text-xs rounded-md bg-red-700 hover:bg-red-700/90 cursor-pointer p-2 text-nowrap">Cerrar sesión</button>
+        </form>
+      </div>
+      <div class="mb-3 flex justify-between items-center">
+        <div>
+          <p class="text-sm font-bold">{{ event.name }}</p>
+          <p class="text-sm italic">{{ event.scheduled_for }}</p>
+        </div>
+        <div>
+          <a class="text-xs font-semibold bg-sky-700 rounded-md text-white p-2" href="{% url 'staff' %}">Volver a inicio</a>
+        </div>
+      </div>
+      <div class="mb-3">
+        <p class="text-sm font-bold py-1">Pedidos realizados</p>
+      </div>
+      <form action="{% url 'export-orders' %}" class="flex mb-2 gap-1">
+        <select class="bg-gray-100 border border-gray-300 p-2.5 text-xs font-semibold rounded-md w-full flex-1" name="grade">
+          <option value="">Todos los pedidos</option>
+          {% for grade in grades %}
+            <option value="{{ grade.0 }}">{{ grade.1 }}</option>
+          {% endfor %}
+        </select>
+        <button class="bg-sky-600 hover:bg-sky-600/90 tewhi font-semibold text-xs text-white px-3 rounded-md cursor-pointer">Exportar pedidos</button>
+      </form>
+      <div class="flex flex-col gap-1 h-96 overflow-y-scroll mb-6 border p-1 rounded-md border-gray-400" hx-get="{% url 'staff-order-list' %}?event={{ event.pk }}" hx-trigger="load, orderStatusUpdated from:body" hx-swap="innerHTML"></div>
+      <div class="mb-3 flex justify-between py-1 items-center">
+        <p class="text-sm font-bold">Productos</p>
+        <form action="{% url 'export-products' %}">
+          <button class="bg-sky-600 hover:bg-sky-600/90 tewhi font-semibold text-xs text-white px-3 py-2 rounded-md cursor-pointer">Exportar productos</button>
+        </form>
+      </div>
+      <div hx-get="{% url 'staff-product-create' %}?event={{ event.pk }}" hx-trigger="load, productCreated from:body"></div>
+      <div class="flex flex-col gap-1 h-96 overflow-y-scroll" hx-get="{% url 'staff-product-list' event.pk %}" hx-trigger="load, productCreated from:body" hx-swap="innerHTML"></div>
+    </div>
+  </div>
+{% endblock %}

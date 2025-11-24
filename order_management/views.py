@@ -172,13 +172,22 @@ class OrderLineCreateView(CreateView):
         return response
 
 
-class StaffEventView(TemplateView):
+class StaffView(TemplateView):
     template_name = "order_management/staff/staff.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["events"] = Event.objects.all()
+        return context
+
+
+class StaffEventView(TemplateView):
+    template_name = "order_management/staff/staff_event.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         context["grades"] = Student.GRADE_CHOICES
-        context["event"] = kwargs["event"]
+        context["event"] = Event.objects.get(pk=kwargs["event"])
         return context
 
 
@@ -188,7 +197,7 @@ class StaffOderList(ListView):
 
     def get_queryset(self):
         queryset = (
-            Order.objects.filter(closed=True)
+            Order.objects.filter(closed=True, event_id=self.request.GET.get("event"))
             .annotate(total=Sum("orderlines__product__price"))
             .order_by("-pk")
         )

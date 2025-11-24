@@ -5,7 +5,7 @@
   <div class="mb-3">
     <p class="font-bold text-xs mb-2">Añada o seleccione a su estudiante</p>
     <div class="mb-2" id="student-create" hx-get="{% url 'student-create' %}?representative={{ representative }}" hx-trigger="load"></div>
-    <div class="grid grid-cols-2 mb-2">
+    <div class="grid grid-cols-2 gap-1 mb-2">
       {% for student in student_list %}
         <div class="flex w-full justify-between p-3 rounded-md border border-gray-300">
           <p class="text-nowrap overflow-ellipsis overflow-hidden text-xs font-semibold">{{ student.name }} - {{ student.grade }} {{ student.section }}</p>

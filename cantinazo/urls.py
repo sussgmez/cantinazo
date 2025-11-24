@@ -9,6 +9,11 @@ from order_management import views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path(
+        "staff/",
+        login_required(views.StaffView.as_view()),
+        name="staff",
+    ),
+    path(
         "staff/event/<int:event>/",
         login_required(views.StaffEventView.as_view()),
         name="staff-event",
