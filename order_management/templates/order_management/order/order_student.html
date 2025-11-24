@@ -1,32 +1,40 @@
 {% load order_management_extra %}
 <div hx-get="{% url 'product-list' %}?order={{ order.pk }}&student={{ student.pk }}&event={{ event.pk }}" hx-trigger="load" id="product-list" class="target:scroll-mt-32 mb-2"></div>
 
-<div class="bg-gray-300 rounded-md p-3 mb-1">
-  <p class="text-xs font-semibold">Pedido de {{ student.name }}</p>
-</div>
+{% regroup order.orderlines.all|sort by student as order_grouped %}
 
-<div class="rounded-md overflow-hidden h-64 p-1 border border-gray-200 bg-gray-100 mb-2 overflow-y-scroll">
-  {% for orderline in orderlines %}
-    <div class="flex justify-between p-2 items-center bg-white rounded-md mb-1">
-      <div>
-        <p class="text-xs font-bold">{{ orderline.product.name }}</p>
-        <p class="text-xs font-medium">{{ orderline.product.price|floatformat:2 }} $ | {{ orderline.product.price|multiply:exchange_rate.rate|floatformat:2 }} Bs.</p>
-      </div>
-      <form hx-post="{% url 'orderline-delete' %}">
-        {% csrf_token %}
-        <input type="hidden" name="orderline" value="{{ orderline.pk }}" />
-        <button class="text-xs p-1 font-semibold rounded text-red-700 border border-red-200 cursor-pointer hover:bg-red-100">Quitar</button>
-      </form>
+<div id="order-detail-{{ order.pk }}" class="rounded-md bg-gray-100 border border-gray-300">
+  {% for orderlines in order_grouped %}
+    <div>
+      <p class="text-xs font-bold p-2 border-b border-b-gray-200">Pedido de {{ orderlines.grouper }}</p>
+
+      {% for orderline in orderlines.list %}
+        <div class="flex justify-between p-2 items-center bg-white rounded-md mb-1">
+          <div>
+            <p class="text-xs font-bold">{{ orderline.product.name }}</p>
+            <p class="text-xs font-medium">{{ orderline.product.price|floatformat:2 }} $ | {{ orderline.product.price|multiply:exchange_rate.rate|floatformat:2 }} Bs.</p>
+          </div>
+          <form hx-post="{% url 'orderline-delete' %}">
+            {% csrf_token %}
+            <input type="hidden" name="orderline" value="{{ orderline.pk }}" />
+            <button class="text-xs p-1 font-semibold rounded text-red-700 border border-red-200 cursor-pointer hover:bg-red-100">Quitar</button>
+          </form>
+        </div>
+      {% empty %}
+        {% if student %}
+          <div class="bg-gray-200 rounded-md cursor-pointer hover:bg-gray-300">
+            <a class="text-xs font-semibold p-3 block text-black/80" href="#product-list">Añadir producto al pedido de {{ student.name }} +</a>
+          </div>
+        {% else %}
+          <div class="bg-gray-200 p-3 rounded-md">
+            <p class="text-xs font-semibold text-black/80">Añada a su estudiante</p>
+          </div>
+        {% endif %}
+      {% endfor %}
     </div>
   {% empty %}
-    {% if student %}
-      <div class="bg-gray-200 rounded-md cursor-pointer hover:bg-gray-300">
-        <a class="text-xs font-semibold p-3 block text-black/80" href="#product-list">Añadir producto al pedido de {{ student.name }} +</a>
-      </div>
-    {% else %}
-      <div class="bg-gray-200 p-3 rounded-md">
-        <p class="text-xs font-semibold text-black/80">Añada a su estudiante</p>
-      </div>
-    {% endif %}
+    <div class="p-3">
+      <p class="text-xs font-semibold">Aún no ha añadido ningún producto.</p>
+    </div>
   {% endfor %}
 </div>

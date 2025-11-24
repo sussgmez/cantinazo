@@ -113,9 +113,7 @@ class OrderStudentView(TemplateView):
             )[0]
             context["student"] = student
             context["order"] = order
-            context["orderlines"] = OrderLine.objects.filter(
-                order=order, student=student
-            )
+
             context["exchange_rate"] = (
                 ExchangeRate.objects.all().order_by("-created_at").first()
             )
