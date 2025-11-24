@@ -1,6 +1,6 @@
 {% load static %}
 {% load order_management_extra %}
-<form method="post" action="{% url 'order-close' order.pk %}" class="flex flex-col gap-4" onsubmit="{% if total <= 0 %}event.preventDefault(){% endif %}">
+<form method="post" action="{% url 'order-close' order.pk %}" class="flex flex-col gap-4 mb-4" onsubmit="{% if total <= 0 %}event.preventDefault(){% endif %}">
   {% csrf_token %}
   <input type="hidden" name="exchange_rate" value="{{ exchange_rate.pk }}" />
   <div>

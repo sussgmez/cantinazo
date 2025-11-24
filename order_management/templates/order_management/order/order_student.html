@@ -1,4 +1,9 @@
 {% load order_management_extra %}
+<div hx-get="{% url 'product-list' %}?order={{ order.pk }}&student={{ student.pk }}&event={{ event.pk }}" hx-trigger="load" id="product-list" class="target:scroll-mt-32 mb-2"></div>
+
+<div class="bg-gray-300 rounded-md p-3 mb-1">
+  <p class="text-xs font-semibold">Pedido de {{ student.name }}</p>
+</div>
 
 <div class="rounded-md overflow-hidden h-64 p-1 border border-gray-200 bg-gray-100 mb-2 overflow-y-scroll">
   {% for orderline in orderlines %}
@@ -25,4 +30,3 @@
     {% endif %}
   {% endfor %}
 </div>
-<div hx-get="{% url 'product-list' %}?order={{ order.pk }}&student={{ student.pk }}&event={{ event.pk }}" hx-trigger="load" id="product-list" class="target:scroll-mt-80"></div>
