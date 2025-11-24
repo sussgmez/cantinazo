@@ -1,5 +1,6 @@
 {% load order_management_extra %}
-<div hx-get="{% url 'product-list' %}?order={{ order.pk }}&student={{ student.pk }}&event={{ event.pk }}" hx-trigger="load" id="product-list" class="target:scroll-mt-32 mb-2"></div>
+
+<div hx-get="{% url 'product-list' %}?order={{ order.pk }}&student={{ student.pk }}&event={{ event.pk }}" hx-trigger="load" id="product-list" class="target:scroll-mt-32 mb-2 h-64"></div>
 
 {% regroup order.orderlines.all|sort by student as order_grouped %}
 
