@@ -238,7 +238,6 @@ def order_close(request, pk):
 
     if request.method == "POST":
         order = Order.objects.get(pk=pk)
-        print(request.POST.get("reference_number"))
         order.reference_number = (
             request.POST.get("reference_number")
             if request.POST.get("reference_number") != ""
@@ -250,6 +249,10 @@ def order_close(request, pk):
         )
         order.closed = True
         order.save()
+
+        message = f"+{order.representative.phone_code} {order.representative.phone_number}: {order.representative.first_name} {order.representative.last_name} ha realizado una nueva orden, nro. de referencia #{order.reference_number}. Por favor confirmar pago."
+
+        send_whatsapp_message("+584123517748", message)
 
         messages.success(request, "Pedido realizado con éxito")
 
@@ -437,7 +440,6 @@ def export_products(request):
 
 
 """
-
 class EventView(TemplateView):
     template_name = "order_management/event/detail.html"
 
