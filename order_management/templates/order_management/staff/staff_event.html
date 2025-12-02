@@ -23,6 +23,7 @@
         <p class="text-sm font-bold py-1">Pedidos realizados</p>
       </div>
       <form action="{% url 'export-orders' %}" class="flex mb-2 gap-1">
+        <input type="hidden" name="event" value="{{ event.pk }}" />
         <select class="bg-gray-100 border border-gray-300 p-2.5 text-xs font-semibold rounded-md w-full flex-1" name="grade">
           <option value="">Todos los pedidos</option>
           {% for grade in grades %}
@@ -39,7 +40,7 @@
         </form>
       </div>
       <div hx-get="{% url 'staff-product-create' %}?event={{ event.pk }}" hx-trigger="load, productCreated from:body"></div>
-      <div class="flex flex-col gap-1 h-96 overflow-y-scroll" hx-get="{% url 'staff-product-list' event.pk %}" hx-trigger="load, productCreated from:body" hx-swap="innerHTML"></div>
+      <div class="flex flex-col gap-1" hx-get="{% url 'staff-product-list' event.pk %}" hx-trigger="load, productCreated from:body" hx-swap="innerHTML"></div>
     </div>
   </div>
 {% endblock %}

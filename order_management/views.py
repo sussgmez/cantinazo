@@ -352,11 +352,14 @@ def export_orders(request):
     )
 
     grade = request.GET.get("grade")
+    event = request.GET.get("event")
 
     if grade:
-        orderlines = OrderLine.objects.filter(order__closed=True, student__grade=grade)
+        orderlines = OrderLine.objects.filter(
+            order__event=event, order__closed=True, student__grade=grade
+        )
     else:
-        orderlines = OrderLine.objects.filter(order__closed=True)
+        orderlines = OrderLine.objects.filter(order__event=event, order__closed=True)
 
     data = (
         orderlines.exclude(order__rejected=True)
