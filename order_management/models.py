@@ -74,6 +74,7 @@ class Product(models.Model):
         Event, verbose_name=_("Evento"), on_delete=models.CASCADE, blank=True, null=True
     )
     stock = models.IntegerField(_("Disponible"))
+    hidden = models.BooleanField(_("Oculto"), default=False)
 
     def __str__(self):
         return self.name

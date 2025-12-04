@@ -4,10 +4,10 @@
 
 {% regroup order.orderlines.all|sort by student as order_grouped %}
 
-<div id="order-detail-{{ order.pk }}" class="rounded-md bg-gray-100 border border-gray-300">
+<div id="order-detail-{{ order.pk }}" class="rounded-md border border-gray-400">
   {% for orderlines in order_grouped %}
-    <div>
-      <p class="text-xs font-bold p-2 border-b border-b-gray-200">Pedido de {{ orderlines.grouper }}</p>
+    <div class="p-1">
+      <p class="text-xs font-bold p-2 rounded-md bg-sky-700 text-white mb-1">Pedido de {{ orderlines.grouper }}</p>
 
       {% for orderline in orderlines.list %}
         <div class="flex justify-between p-2 items-center bg-white rounded-md mb-1">
@@ -34,8 +34,8 @@
       {% endfor %}
     </div>
   {% empty %}
-    <div class="p-3">
-      <p class="text-xs font-semibold">Aún no ha añadido ningún producto.</p>
+    <div class="p-1">
+      <p class="p-3 text-xs font-semibold bg-gray-200 rounded-md">Aún no ha añadido ningún producto.</p>
     </div>
   {% endfor %}
 </div>

@@ -1,0 +1,13 @@
+<div class="bg-white rounded-md w-full max-w-md p-6 border border-gray-400/50" onclick="event.stopPropagation()">
+  <form hx-post="{% url 'staff-product-hide' product.pk %}" onsubmit="$('#product-delete').hide();">
+    {% csrf_token %}
+    <input type="hidden" name="hidden" value="true" />
+    <p class="font-medium text-lg mb-4">
+      ¿Está seguro que desea eliminar el producto: <span class="font-bold">{{ product.name }}</span>?
+    </p>
+    <div class="flex gap-1 justify-end">
+      <button class="text-xs font-medium rounded-md px-3 py-1.5 bg-green-700 text-white hover:bg-green-700/90 cursor-pointer transition-colors block" onclick="event.preventDefault();$('#product-delete').hide();">Cancelar</button>
+      <button class="text-xs font-medium rounded-md px-3 py-1.5 bg-red-700 text-white hover:bg-red-700/90 cursor-pointer transition-colors block">Eliminar</button>
+    </div>
+  </form>
+</div>

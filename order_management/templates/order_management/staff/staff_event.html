@@ -36,11 +36,14 @@
       <div class="mb-3 flex justify-between py-1 items-center">
         <p class="text-sm font-bold">Productos</p>
         <form action="{% url 'export-products' %}">
+          <input type="hidden" name="event" value="{{ event.pk }}" />
           <button class="bg-sky-600 hover:bg-sky-600/90 tewhi font-semibold text-xs text-white px-3 py-2 rounded-md cursor-pointer">Exportar productos</button>
         </form>
       </div>
       <div hx-get="{% url 'staff-product-create' %}?event={{ event.pk }}" hx-trigger="load, productCreated from:body"></div>
-      <div class="flex flex-col gap-1" hx-get="{% url 'staff-product-list' event.pk %}" hx-trigger="load, productCreated from:body" hx-swap="innerHTML"></div>
+      <div class="flex flex-col gap-1" hx-get="{% url 'staff-product-list' event.pk %}" hx-trigger="load, productCreated from:body, productUpdated from:body" hx-swap="innerHTML"></div>
     </div>
   </div>
+  <div class="fixed top-0 left-0 right-0 bottom-0 bg-black/10 backdrop-blur-md flex items-center justify-center p-4" id="product-update" style="display: none;"></div>
+  <div class="fixed top-0 left-0 right-0 bottom-0 bg-black/10 backdrop-blur-md flex items-center justify-center p-4" id="product-delete" style="display: none;" onclick="$(this).hide()"></div>
 {% endblock %}

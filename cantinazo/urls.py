@@ -51,6 +51,16 @@ urlpatterns = [
         login_required(views.StaffProductCreateView.as_view()),
         name="staff-product-create",
     ),
+    path(
+        "staff/product/update/<int:pk>/",
+        login_required(views.StaffProductUpdateView.as_view()),
+        name="staff-product-update",
+    ),
+    path(
+        "staff/product/delete/<int:pk>/",
+        login_required(views.StaffProductHideView.as_view()),
+        name="staff-product-hide",
+    ),
     path("product/list/", views.ProductListView.as_view(), name="product-list"),
     path(
         "orderline/create/",

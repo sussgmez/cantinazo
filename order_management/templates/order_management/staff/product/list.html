@@ -5,6 +5,7 @@
       <th class="text-left p-2">Precio</th>
       <th class="text-left p-2">Disponible</th>
       <th class="text-left p-2">Vendidos</th>
+      <th class="text-left p-2 w-0"></th>
     </tr>
 
     {% for product in product_list %}
@@ -13,6 +14,10 @@
         <td class="text-left p-2">{{ product.price|floatformat:2 }} $</td>
         <td class="text-left p-2">{{ product.stock }}</td>
         <td class="text-left p-2">{{ product.sold }}</td>
+        <td class="text-left p-2 flex items-center justify-center gap-2 w-fit">
+          <button hx-get="{% url 'staff-product-update' product.pk %}" hx-target="#product-update" onclick="$('#product-update').show()" class="flex gap-1 items-center cursor-pointer hover:underline font-medium text-green-800">Editar</button>
+          <button hx-get="{% url 'staff-product-hide' product.pk %}" hx-target="#product-delete" onclick="$('#product-delete').show()" class="flex gap-1 items-center cursor-pointer hover:underline font-medium text-red-800">Eliminar</button>
+        </td>
       </tr>
     {% endfor %}
   </table>
