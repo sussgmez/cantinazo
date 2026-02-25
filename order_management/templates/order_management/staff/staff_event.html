@@ -113,7 +113,7 @@
                 <div class="p-4 border-b border-slate-100"
                      hx-get="{% url 'staff-product-create' %}?event={{ event.pk }}"
                      hx-trigger="load, productCreated from:body"></div>
-                <div class="flex-1 overflow-y-auto bg-white p-5"
+                <div class="flex-1 overflow-y-auto bg-white "
                      hx-get="{% url 'staff-product-list' event.pk %}"
                      hx-trigger="load, productCreated from:body, productUpdated from:body"
                      hx-swap="innerHTML">
