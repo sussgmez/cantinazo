@@ -1,2 +1,4 @@
-<div hx-get="{% url 'student-list' %}?representative={{ representative }}&event={{ event }}" hx-trigger="load, studentCreated from:body, studentRemoved from:body"></div>
-<div hx-get="{% url 'order-list' %}?representative={{ representative }}&event={{ event }}" hx-trigger="load"></div>
+<div hx-get="{% url 'student-list' %}?representative={{ representative }}&event={{ event }}"
+     hx-trigger="load, studentCreated from:body, studentRemoved from:body"></div>
+<div hx-get="{% url 'order-list' %}?representative={{ representative }}&event={{ event }}"
+     hx-trigger="load"></div>

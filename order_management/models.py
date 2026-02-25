@@ -24,7 +24,6 @@ class ExchangeRate(models.Model):
 class Representative(models.Model):
     id = models.IntegerField(_("ID"), unique=True, primary_key=True)
     first_name = models.CharField(_("Nombre"), max_length=100, blank=True, null=True)
-    last_name = models.CharField(_("Apellido"), max_length=100, blank=True, null=True)
     phone_code = models.CharField(_("Código telefónico"), max_length=3)
     phone_number = models.CharField(_("Nro. de teléfono"), max_length=10)
 
@@ -75,6 +74,7 @@ class Product(models.Model):
         Event, verbose_name=_("Evento"), on_delete=models.CASCADE, blank=True, null=True
     )
     stock = models.IntegerField(_("Disponible"))
+    hidden = models.BooleanField(_("Oculto"), default=False)
 
     def __str__(self):
         return self.name
@@ -132,6 +132,21 @@ class OrderLine(models.Model):
         on_delete=models.CASCADE,
         related_name="orderlines",
     )
+
+
+class Movement(models.Model):
+    CATEGORY_CHOICES = [
+        ("income", "Ingreso"),
+        ("spent", "Gasto"),
+    ]
+
+    description = models.CharField(_("Descripción"), max_length=50)
+    amount = models.FloatField(_("Monto"))
+    category = models.CharField(_("Categoría"), max_length=6, choices=CATEGORY_CHOICES)
+    created_at = models.DateTimeField(_("Fecha de creación"), auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
 
 
 @receiver(post_save, sender=OrderLine)

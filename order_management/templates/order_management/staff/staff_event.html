@@ -1,45 +1,135 @@
-{% extends 'core/base.html' %}
+{% extends "core/base.html" %}
 {% load static %}
 {% block content %}
-  <div class="bg-sky-100 flex flex-col items-center min-h-screen py-2 px-2 gap-2">
-    <div class="bg-white flex flex-col rounded-lg w-full max-w-2xl p-4 shadow-2xl">
-      <div class="mb-4 flex gap-2">
-        <p class="font-bold text-xl">¡Bienvenido al Sistema de Pedidos de Mapis!</p>
-        <form class="ml-auto w-fit" action="{% url 'logout' %}" method="post">
-          {% csrf_token %}
-          <button class="text-white font-semibold text-xs rounded-md bg-red-700 hover:bg-red-700/90 cursor-pointer p-2 text-nowrap">Cerrar sesión</button>
-        </form>
-      </div>
-      <div class="mb-3 flex justify-between items-center">
-        <div>
-          <p class="text-sm font-bold">{{ event.name }}</p>
-          <p class="text-sm italic">{{ event.scheduled_for }}</p>
+    <div class="w-full max-w-5xl mx-auto px-4 py-8 font-sans space-y-6">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <p class="font-bold text-slate-700">
+                    Sistema de Pedidos <span class="text-amber-500 font-extrabold">Promo X</span>
+                </p>
+                <form action="{% url 'logout' %}" method="post" class="m-0">
+                    {% csrf_token %}
+                    <button class="flex items-center gap-2 px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-medium text-xs rounded-lg transition-colors border border-rose-200">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        Cerrar sesión
+                    </button>
+                </form>
+            </div>
+            <div class="p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white">
+                <div class="flex items-start gap-3">
+                    <div class="p-2 bg-amber-50 rounded-lg border border-amber-100 hidden sm:block">
+                        <svg class="w-6 h-6 text-amber-500"
+                             fill="none"
+                             stroke="currentColor"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-extrabold text-slate-800">{{ event.name }}</h1>
+                        <p class="text-sm font-medium text-slate-500 flex items-center gap-1 mt-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            {{ event.scheduled_for }}
+                        </p>
+                    </div>
+                </div>
+                <a href="{% url 'staff' %}"
+                   class="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm rounded-lg transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Volver a eventos
+                </a>
+            </div>
         </div>
-        <div>
-          <a class="text-xs font-semibold bg-sky-700 rounded-md text-white p-2" href="{% url 'staff' %}">Volver a inicio</a>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col h-[600px]">
+                <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-xl">
+                    <h2 class="font-bold text-slate-700 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-sky-500"
+                             fill="none"
+                             stroke="currentColor"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                        </svg>
+                        Pedidos Realizados
+                    </h2>
+                </div>
+                <div class="p-4 border-b border-slate-100">
+                    <form action="{% url 'export-orders' %}"
+                          class="flex flex-col sm:flex-row gap-2">
+                        <input type="hidden" name="event" value="{{ event.pk }}" />
+                        <select name="grade"
+                                class="flex-1 bg-slate-50 border border-slate-300 text-slate-700 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 p-2.5 outline-none">
+                            <option value="">Todos los pedidos</option>
+                            {% for grade in grades %}<option value="{{ grade.0 }}">{{ grade.1 }}</option>{% endfor %}
+                        </select>
+                        <button type="submit"
+                                class="flex items-center justify-center gap-2 bg-sky-600 hover:bg-sky-700 text-white font-medium text-sm px-4 py-2.5 rounded-lg transition-colors shadow-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            Exportar
+                        </button>
+                    </form>
+                </div>
+                <div class="flex-1 overflow-y-auto p-2 bg-slate-50/50"
+                     hx-get="{% url 'staff-order-list' %}?event={{ event.pk }}"
+                     hx-trigger="load, orderStatusUpdated from:body"
+                     hx-swap="innerHTML">
+                    <div class="animate-pulse flex flex-col gap-2 p-2">
+                        <div class="h-12 bg-slate-200 rounded-lg w-full"></div>
+                        <div class="h-12 bg-slate-200 rounded-lg w-full"></div>
+                        <div class="h-12 bg-slate-200 rounded-lg w-full"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col h-[600px]">
+                <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-xl">
+                    <h2 class="font-bold text-slate-700 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-emerald-500"
+                             fill="none"
+                             stroke="currentColor"
+                             viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                        </svg>
+                        Catálogo de Productos
+                    </h2>
+                    <form action="{% url 'export-products' %}" class="m-0">
+                        <input type="hidden" name="event" value="{{ event.pk }}" />
+                        <button type="submit"
+                                title="Exportar Productos"
+                                class="p-2 text-slate-400 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+                <div class="p-4 border-b border-slate-100"
+                     hx-get="{% url 'staff-product-create' %}?event={{ event.pk }}"
+                     hx-trigger="load, productCreated from:body"></div>
+                <div class="flex-1 overflow-y-auto bg-white p-5"
+                     hx-get="{% url 'staff-product-list' event.pk %}"
+                     hx-trigger="load, productCreated from:body, productUpdated from:body"
+                     hx-swap="innerHTML">
+                    <div class="animate-pulse flex flex-col gap-2">
+                        <div class="h-16 bg-slate-200 rounded-lg w-full"></div>
+                        <div class="h-16 bg-slate-200 rounded-lg w-full"></div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="mb-3">
-        <p class="text-sm font-bold py-1">Pedidos realizados</p>
-      </div>
-      <form action="{% url 'export-orders' %}" class="flex mb-2 gap-1">
-        <select class="bg-gray-100 border border-gray-300 p-2.5 text-xs font-semibold rounded-md w-full flex-1" name="grade">
-          <option value="">Todos los pedidos</option>
-          {% for grade in grades %}
-            <option value="{{ grade.0 }}">{{ grade.1 }}</option>
-          {% endfor %}
-        </select>
-        <button class="bg-sky-600 hover:bg-sky-600/90 tewhi font-semibold text-xs text-white px-3 rounded-md cursor-pointer">Exportar pedidos</button>
-      </form>
-      <div class="flex flex-col gap-1 h-96 overflow-y-scroll mb-6 border p-1 rounded-md border-gray-400" hx-get="{% url 'staff-order-list' %}?event={{ event.pk }}" hx-trigger="load, orderStatusUpdated from:body" hx-swap="innerHTML"></div>
-      <div class="mb-3 flex justify-between py-1 items-center">
-        <p class="text-sm font-bold">Productos</p>
-        <form action="{% url 'export-products' %}">
-          <button class="bg-sky-600 hover:bg-sky-600/90 tewhi font-semibold text-xs text-white px-3 py-2 rounded-md cursor-pointer">Exportar productos</button>
-        </form>
-      </div>
-      <div hx-get="{% url 'staff-product-create' %}?event={{ event.pk }}" hx-trigger="load, productCreated from:body"></div>
-      <div class="flex flex-col gap-1 h-96 overflow-y-scroll" hx-get="{% url 'staff-product-list' event.pk %}" hx-trigger="load, productCreated from:body" hx-swap="innerHTML"></div>
     </div>
-  </div>
-{% endblock %}
+    <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-opacity"
+         id="product-update"
+         style="display: none"></div>
+    <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-opacity"
+         id="product-delete"
+         style="display: none"
+         onclick="$(this).hide()"></div>
+{% endblock content %}

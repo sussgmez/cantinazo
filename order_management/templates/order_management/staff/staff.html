@@ -1,30 +1,104 @@
-{% extends 'core/base.html' %}
+{% extends "core/base.html" %}
 {% load static %}
 {% block content %}
-  <div class="bg-sky-100 flex flex-col items-center min-h-screen py-2 px-2 gap-2">
-    <div class="bg-white flex flex-col rounded-lg w-full max-w-2xl p-4 shadow-2xl">
-      <div class="mb-4 flex gap-2">
-        <p class="font-bold text-xl">¡Bienvenido al Sistema de Pedidos de Mapis!</p>
-        <form class="ml-auto w-fit" action="{% url 'logout' %}" method="post">
-          {% csrf_token %}
-          <button class="text-white font-semibold text-xs rounded-md bg-red-700 hover:bg-red-700/90 cursor-pointer p-2 text-nowrap">Cerrar sesión</button>
-        </form>
-      </div>
-      <div class="mb-3">
-        <p class="font-bold py-1">Eventos</p>
-      </div>
-      <div>
-        {% for event in events %}
-          <a class="block mb-2 p-3 border border-gray-300 rounded-md hover:bg-gray-100" href="{% url 'staff-event' event.pk %}">
-            <p class="text-sm font-bold">{{ event.name }}</p>
-            <p class="text-sm">{{ event.scheduled_for }}</p>
-          </a>
-        {% empty %}
-          <div class="bg-gray-100 rounded-md border border-gray-200 p-3">
-            <p class="text-sm font-semibold text-gray-800">Aún no se ha registrado ningún evento.</p>
-          </div>
-        {% endfor %}
-      </div>
+    <nav class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50 mb-8 font-sans">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="shrink-0 flex items-center gap-2">
+                    <svg class="w-8 h-8 text-amber-500"
+                         fill="none"
+                         stroke="currentColor"
+                         viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14v6" />
+                    </svg>
+                    <span class="font-bold text-xl text-slate-800 tracking-tight">Promo<span class="text-amber-500">Mapis</span></span>
+                </div>
+                <div class="flex items-center space-x-1 sm:space-x-2">
+                    <a href="{% url 'info' %}"
+                       class="px-3 py-2 rounded-md text-sm font-semibold text-amber-700 bg-amber-50 transition-colors">
+                        Resumen
+                    </a>
+                    <a href="{% url 'staff' %}"
+                       class="px-3 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors">
+                        Eventos
+                    </a>
+                    <div class="hidden sm:block w-px h-6 bg-slate-200 mx-2"></div>
+                    <form action="{% url 'logout' %}" method="post" class="inline m-0 p-0">
+                        {% csrf_token %}
+                        <button type="submit"
+                                class="flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                            <span class="hidden sm:inline">Salir</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="w-full max-w-4xl mx-auto px-4 py-8 font-sans">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-slate-50 px-6 py-5 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h1 class="font-extrabold text-xl text-slate-800">¡Bienvenido al Sistema de Mapis!</h1>
+                    <p class="text-sm text-slate-500 mt-1">Gestiona los eventos programados</p>
+                </div>
+                <form action="{% url 'logout' %}" method="post" class="m-0">
+                    {% csrf_token %}
+                    <button class="flex items-center gap-2 px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold text-sm rounded-lg transition-colors border border-rose-200">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        Cerrar sesión
+                    </button>
+                </form>
+            </div>
+            <div class="p-6">
+                <div class="flex items-center gap-2 mb-4">
+                    <svg class="w-5 h-5 text-amber-500"
+                         fill="none"
+                         stroke="currentColor"
+                         viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <h2 class="font-bold text-lg text-slate-700">Próximos Eventos</h2>
+                </div>
+                <div class="space-y-3">
+                    {% for event in events %}
+                        <a href="{% url 'staff-event' event.pk %}"
+                           class="group flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border border-slate-200 rounded-xl hover:border-amber-400 hover:shadow-md transition-all duration-200 bg-white">
+                            <div>
+                                <p class="text-base font-bold text-slate-800 group-hover:text-amber-600 transition-colors">{{ event.name }}</p>
+                                <div class="flex items-center gap-1 mt-1 text-slate-500 text-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span>{{ event.scheduled_for }}</span>
+                                </div>
+                            </div>
+                            <div class="hidden sm:block text-slate-300 group-hover:text-amber-500 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </div>
+                        </a>
+                    {% empty %}
+                        <div class="bg-slate-50 border border-dashed border-slate-300 rounded-xl p-8 text-center flex flex-col items-center">
+                            <svg class="w-12 h-12 text-slate-300 mb-3"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                            </svg>
+                            <p class="text-sm font-medium text-slate-600">Aún no se ha registrado ningún evento.</p>
+                            <p class="text-xs text-slate-400 mt-1">Cuando se creen nuevos eventos, aparecerán aquí.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-{% endblock %}
+{% endblock content %}

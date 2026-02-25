@@ -7,6 +7,7 @@ from .models import (
     Representative,
     Product,
     Event,
+    Movement,
 )
 
 
@@ -41,4 +42,9 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Movement)
+class MovementAdmin(admin.ModelAdmin):
     pass

@@ -51,6 +51,16 @@ urlpatterns = [
         login_required(views.StaffProductCreateView.as_view()),
         name="staff-product-create",
     ),
+    path(
+        "staff/product/update/<int:pk>/",
+        login_required(views.StaffProductUpdateView.as_view()),
+        name="staff-product-update",
+    ),
+    path(
+        "staff/product/delete/<int:pk>/",
+        login_required(views.StaffProductHideView.as_view()),
+        name="staff-product-hide",
+    ),
     path("product/list/", views.ProductListView.as_view(), name="product-list"),
     path(
         "orderline/create/",
@@ -66,73 +76,9 @@ urlpatterns = [
     ),
     path("order/export/", views.export_orders, name="export-orders"),
     path("product/export/", views.export_products, name="export-products"),
+    path("info/", views.info_view, name="info"),
+    path("movement/create/", views.movement_create, name="movement-create"),
+    path("movement/delete/<int:pk>/", views.movement_delete, name="movement-delete"),
+    path("movement/list/", views.movement_list, name="movement-list"),
+    path("info/progress_bar/", views.progress_bar, name="progress-bar"),
 ]
-"""
-path(
-    "cantinazo_admin/",
-    login_required(views.AdminView.as_view()),
-    name="admin-cantinazo",
-),
-path("", views.WelcomeView.as_view(), name="welcome"),
-path("event/<int:pk>/", views.EventView.as_view(), name="event"),
-path("pedido/", views.HomeView.as_view(), name="home"),
-# Representative
-path(
-    "representative/create/",
-    views.RepresentativeCreateView.as_view(),
-    name="representative-create",
-),
-# Student
-path(
-    "student/create/",
-    views.StudentCreateView.as_view(),
-    name="student-create",
-),
-path(
-    "student/delete/<int:pk>/",
-    views.student_delete,
-    name="student-delete",
-),
-# Order
-path(
-    "cantinazo_admin/order/list/",
-    login_required(views.AdminOrderListView.as_view()),
-    name="admin-order-list",
-),
-path(
-    "order/",
-    views.OrderView.as_view(),
-    name="order",
-),
-path(
-    "order/update/<int:pk>/",
-    views.order_update,
-    name="order-update",
-),
-path(
-    "order/status/<int:pk>/",
-    views.order_update_status,
-    name="order-update-status",
-),
-path("order/orderline/create/", views.orderline_create, name="orderline-create"),
-path(
-    "order/orderline/remove/<int:pk>/",
-    views.orderline_remove,
-    name="orderline-remove",
-),
-path("export_excel", views.export_excel, name="export-excel"),
-# Product
-path(
-    "product/list/",
-    views.ProductListView.as_view(),
-    name="product-list",
-),
-path(
-    "export_product_excel/", views.export_product_excel, name="export-product-excel"
-),
-path(
-    "export_representative_excel/",
-    views.export_representative_excel,
-    name="export-representative-excel",
-),
-"""

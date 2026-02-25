@@ -1,0 +1,33 @@
+<div class="bg-white rounded-xl w-full max-w-md p-6 shadow-2xl border border-slate-200 transform transition-all font-sans"
+     onclick="event.stopPropagation()">
+  <div class="flex items-start gap-4">
+    <div class="shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-rose-100 text-rose-600">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+    </div>
+    <div class="mt-0.5">
+      <h3 class="text-lg font-bold text-slate-800">Eliminar producto</h3>
+      <p class="text-sm text-slate-500 mt-2 leading-relaxed">
+        ¿Estás seguro que deseas eliminar el producto <span class="font-bold text-slate-700">"{{ product.name }}"</span>? Esta acción lo ocultará del catálogo y no se podrá deshacer.
+      </p>
+    </div>
+  </div>
+  <form hx-post="{% url 'staff-product-hide' product.pk %}"
+        onsubmit="$('#product-delete').hide();"
+        class="mt-6">
+    {% csrf_token %}
+    <input type="hidden" name="hidden" value="true" />
+    <div class="flex gap-3 justify-end">
+      <button type="button"
+              onclick="$('#product-delete').hide();"
+              class="px-4 py-2 text-sm font-semibold rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-200 transition-colors">
+        Cancelar
+      </button>
+      <button type="submit"
+              class="px-4 py-2 text-sm font-semibold rounded-lg bg-rose-600 border border-transparent text-white hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-1 transition-colors">
+        Sí, eliminar
+      </button>
+    </div>
+  </form>
+</div>

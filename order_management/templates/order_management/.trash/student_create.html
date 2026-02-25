@@ -1,21 +1,31 @@
 <form hx-post="{% url 'student-create' %}">
-  {% csrf_token %}
-  <p class="font-bold mb-2 pb-1 border-b text-sm">Añadir estudiante</p>
-  <input type="hidden" name="representative" value="{{ representative }}" />
-  <div class="flex flex-col gap-1">
-    <input class="font-semibold p-2 text-sm rounded bg-gray-200 w-full" type="text" name="name" maxlength="100" required id="id_name" placeholder="Nombre" />
-    <div class="flex gap-1">
-      <select class="w-full font-semibold p-2 text-sm rounded bg-gray-200" name="grade" required id="id_grade">
-        {% for grade in grades %}
-          <option value="{{ grade.0 }}">{{ grade.1 }}</option>
-        {% endfor %}
-      </select>
-      <select class="w-full font-semibold p-2 text-sm rounded bg-gray-200" name="section" required id="id_section">
-        {% for section in sections %}
-          <option value="{{ section.0 }}">{{ section.1 }}</option>
-        {% endfor %}
-      </select>
-      <button class="text-xs p-2 px-4 bg-sky-500 font-bold rounded border border-sky-500 text-white transition hover:border-sky-600 hover:bg-sky-600 cursor-pointer">Agregar</button>
+    {% csrf_token %}
+    <p class="font-bold mb-2 pb-1 border-b text-sm">Añadir estudiante</p>
+    <input type="hidden" name="representative" value="{{ representative }}" />
+    <div class="flex flex-col gap-1">
+        <input class="font-semibold p-2 text-sm rounded bg-gray-200 w-full"
+               type="text"
+               name="name"
+               maxlength="100"
+               required
+               id="id_name"
+               placeholder="Nombre" />
+        <div class="flex gap-1">
+            <select class="w-full font-semibold p-2 text-sm rounded bg-gray-200"
+                    name="grade"
+                    required
+                    id="id_grade">
+                {% for grade in grades %}<option value="{{ grade.0 }}">{{ grade.1 }}</option>{% endfor %}
+            </select>
+            <select class="w-full font-semibold p-2 text-sm rounded bg-gray-200"
+                    name="section"
+                    required
+                    id="id_section">
+                {% for section in sections %}<option value="{{ section.0 }}">{{ section.1 }}</option>{% endfor %}
+            </select>
+            <button class="text-xs p-2 px-4 bg-sky-500 font-bold rounded border border-sky-500 text-white transition hover:border-sky-600 hover:bg-sky-600 cursor-pointer">
+                Agregar
+            </button>
+        </div>
     </div>
-  </div>
 </form>
